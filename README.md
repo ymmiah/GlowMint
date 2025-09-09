@@ -1,7 +1,7 @@
 # ✨ GlowMint - AI Photo Editor
 
 ![GlowMint Banner](https://img.shields.io/badge/GlowMint-AI%20Photo%20Editor-14b8a6?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJoLTcgdy03IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjEuNSI+PHBhdGggc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNOS44MTMgMTUuOTA0TDkgMTguNzVsLS44MTMtMi44NDZhNC41IDQuNSAwIDAwLTMuMDktMy4wOUwyLjI1IDEybDIuODQ2LS44MTNhNC41IDQuNSAwIDAwMy4wOS0zLjA5TDkgNS4yNWwuODEzIDIuODQ2YTQuNSA0LjUgMCAwMDMuMDkgMy4wOUwxNS43NSAxMmwtMi44NDYuODEzYTQuNSA0LjUgMCAwMC0zLjA5IDMuMDl6TTE4LjI1OSA4LjcxNUwxOCAzLjc1bC0uMjU5LTEuMDM1YTMuMzc1IDMuMzc1IDAgMDAtMi40NTUtMi40NTZMMTQuMjUgNmwxLjAzNi0uMjU5YTMuMzc1IDMuMzc1IDAgMDAyLjQ1NS0yLjQ1NkwxOCAyLjI1bC4yNTkgMS4wMzVhMy4zNzUgMy4zNzUgMCAwMDIuNDU2IDIuNDU2TDIxLjc1IDZsLTEuMDM1LjI1OWEzLjM3NSAzLjM3NSAwIDAwLTIuNDU2IDIuNDU2ek0xNi44OTggMjAuNTI4TDE2LjI1IDIyLjVsLS42NDgtMS45NzJhNC41IDQuNSAwIDAxLTMuMDktMy4wOWwtMS45NzItLjY0OCAxLjk3Mi0uNjQ4YTQuNSA0LjUgMCAwMTMuMDktMy4wOWwuNjQ4LTEuOTcyLjY0OCAxLjk3MmE0LjUgNC41IDAgMDEzLjA5IDMuMDlsMS45NzIuNjQ4LTEuOTcyLjY0OGE0LjUgNC41IDAgMDEtMy4wOSAzLjA5eiIgLz48L3N2Zz4=)
-[![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg?style=flat-square)](LICENSE.md)
 [![React Version](https://img.shields.io/badge/React-^19.1.1-blue.svg?style=flat-square&logo=react)](https://react.dev/)
 [![Gemini API](https://img.shields.io/badge/Google-Gemini%20API-4285F4.svg?style=flat-square&logo=google)](https://ai.google.dev/)
 
@@ -70,7 +70,7 @@ You have two powerful options for editing your photos:
 
 All notable changes to this project will be documented in this section.
 
-### [1.0.0] - 2024-07-28
+### [1.0.0] - 2025-09-09
 
 #### ✨ Initial Release
 
