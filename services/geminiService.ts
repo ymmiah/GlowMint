@@ -1,0 +1,95 @@
+import { GoogleGenAI, Modality } from "@google/genai";
+import type { GenerateContentResponse } from "@google/genai";
+
+if (!process.env.API_KEY || process.env.API_KEY.trim() === '') {
+  throw new Error("API_KEY environment variable is not set or is empty. This is required for the application to function.");
+}
+
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+interface EditResult {
+  editedImage: string | null;
+  text: string | null;
+}
+
+interface ImageInput {
+  base64ImageData: string;
+  mimeType: string;
+}
+
+export const editImageWithNanoBanana = async (
+  images: ImageInput[],
+  prompt: string,
+  mask?: ImageInput
+): Promise<EditResult> => {
+  try {
+    const imageParts = images.map(image => ({
+      inlineData: {
+        data: image.base64ImageData,
+        mimeType: image.mimeType,
+      },
+    }));
+    
+    const maskPart = mask ? [{
+        inlineData: {
+            data: mask.base64ImageData,
+            mimeType: mask.mimeType
+        }
+    }] : [];
+
+    const textPart = { text: prompt };
+
+    const response: GenerateContentResponse = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-image-preview',
+      contents: {
+        parts: [...imageParts, ...maskPart, textPart],
+      },
+      config: {
+        responseModalities: [Modality.IMAGE, Modality.TEXT],
+      },
+    });
+
+    let editedImage: string | null = null;
+    let text: string | null = null;
+
+    const candidate = response.candidates?.[0];
+
+    if (candidate && candidate.content && Array.isArray(candidate.content.parts)) {
+      for (const part of candidate.content.parts) {
+        if (part.inlineData) {
+          editedImage = part.inlineData.data;
+        } else if (part.text) {
+          text = part.text;
+        }
+      }
+    }
+    
+    // If no image is returned, check for a block reason or other feedback.
+    if (!editedImage) {
+        if (response.promptFeedback?.blockReason) {
+            throw new Error(`GENERIC_ERROR::Request was blocked. Reason: ${response.promptFeedback.blockReason}. Please adjust your prompt or image.`);
+        }
+        console.warn("API response did not contain an image part and was not blocked. Response:", response);
+    }
+
+    return { editedImage, text };
+    
+  } catch (error) {
+    console.error("Error calling Gemini API:", error);
+    if (error instanceof Error) {
+        // If the error is already one of our custom formatted errors, just re-throw it.
+        if (error.message.includes('::')) {
+            throw error;
+        }
+
+        const message = error.message.toLowerCase();
+        if (message.includes("permission_denied") || message.includes("403") || message.includes("api key not valid")) {
+            throw new Error("INVALID_KEY::Your API key seems to be invalid or missing permissions. Please double-check it and try again.");
+        } else if (message.includes("quota")) {
+            throw new Error("QUOTA_EXCEEDED::You've reached your API usage limit. Please check your quota in the Google AI console or try again later.");
+        }
+    }
+    // Fallback for other errors
+    throw new Error("GENERIC_ERROR::The AI seems to be having trouble right now. Please try again in a moment.");
+  }
+};

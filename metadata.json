@@ -1,0 +1,5 @@
+{
+  "name": "GlowMint",
+  "description": "GlowMint is an AI-powered photo editing application using the Gemini Nano Banana model to magically transform your images based on text prompts.",
+  "requestFramePermissions": []
+}
