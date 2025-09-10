@@ -28,7 +28,7 @@ const BeforeAfter: React.FC<{
   after: React.ReactNode;
   label: string;
 }> = ({ before, after, label }) => (
-  <div className="bg-slate-900/50 p-3 rounded-lg flex flex-col items-center">
+  <div className="bg-slate-900/50 p-3 rounded-lg flex flex-col items-center h-full">
     <div className="flex gap-2 justify-center items-center">
       <div className="w-28 h-28 bg-slate-700 rounded-lg flex flex-col items-center justify-center p-2 text-center overflow-hidden">
         {before}
@@ -110,26 +110,49 @@ const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                         </div>
                         <div>
                             <h4 className="font-bold text-white text-lg mb-2">Option B: Use Quick Actions</h4>
-                            <p className="text-slate-300 mb-4">For common tasks, use our one-click Quick Actions. These apply professionally crafted prompts to your image for instant, high-quality results. Explore both the main actions and the <strong className="text-teal-400">"More Effects"</strong> for a full range of creative options!</p>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <BeforeAfter label="✂️ Remove BG"
-                                  before={<svg width="80" height="80" viewBox="0 0 80 80" className="text-slate-400"><path d="M10 70 L70 10 M10 10 L70 70" stroke="currentColor" strokeWidth="2" strokeDasharray="4"/><circle cx="40" cy="40" r="20" fill="#64748b"/></svg>}
-                                  after={<svg width="80" height="80" viewBox="0 0 80 80" className="text-teal-300"><circle cx="40" cy="40" r="20" fill="currentColor"/></svg>}
-                                />
-                                <BeforeAfter label="🎨 Colorize"
-                                  before={<svg width="80" height="80" viewBox="0 0 80 80" className="text-slate-400"><path d="M0 80 L 40 20 L 80 80 Z" fill="currentColor"/><circle cx="60" cy="20" r="10" fill="currentColor"/></svg>}
-                                  after={<svg width="80" height="80" viewBox="0 0 80 80"><path d="M0 80 L 40 20 L 80 80 Z" fill="#2dd4bf"/><circle cx="60" cy="20" r="10" fill="#facc15"/></svg>}
-                                />
-                                <BeforeAfter label="🎞️ Vintage"
-                                   before={<svg width="80" height="80" viewBox="0 0 80 80" className="text-slate-400"><rect width="80" height="80" fill="#64748b"/><circle cx="40" cy="40" r="15" fill="#e2e8f0"/></svg>}
-                                   after={<svg width="80" height="80" viewBox="0 0 80 80"><rect width="80" height="80" fill="#a16207"/><circle cx="40" cy="40" r="15" fill="#fef3c7"/><rect width="80" height="80" fill="black" opacity="0.1"/></svg>}
-                                />
-                                 <BeforeAfter label="💥 Cartoonify"
-                                   before={<svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="25" fill="#94a3b8"/><circle cx="30" cy="35" r="3" fill="white"/><circle cx="50" cy="35" r="3" fill="white"/></svg>}
-                                   after={<svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="25" fill="#2dd4bf" stroke="black" strokeWidth="3"/><circle cx="30" cy="35" r="5" fill="white" stroke="black" strokeWidth="2"/><circle cx="50" cy="35" r="5" fill="white" stroke="black" strokeWidth="2"/><path d="M30 55 Q 40 65 50 55" stroke="black" strokeWidth="2" fill="none"/></svg>}
-                                />
+                             <p className="text-slate-300 mb-4">For common tasks, use our library of pre-made edits. They are split into two types:</p>
+
+                            <div className="bg-slate-900/30 p-4 rounded-lg mt-4">
+                                <h5 className="font-semibold text-teal-300 mb-3">One-Click Effects</h5>
+                                <p className="text-slate-400 text-sm mb-4">These apply an instant transformation to your entire image.</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <BeforeAfter label="✂️ Remove BG"
+                                      before={<svg width="80" height="80" viewBox="0 0 80 80" className="text-slate-400"><path d="M10 70 L70 10 M10 10 L70 70" stroke="currentColor" strokeWidth="2" strokeDasharray="4"/><circle cx="40" cy="40" r="20" fill="#64748b"/></svg>}
+                                      after={<svg width="80" height="80" viewBox="0 0 80 80" className="text-teal-300"><circle cx="40" cy="40" r="20" fill="currentColor"/></svg>}
+                                    />
+                                    <BeforeAfter label="🎨 Colorize"
+                                      before={<svg width="80" height="80" viewBox="0 0 80 80" className="text-slate-400"><path d="M0 80 L 40 20 L 80 80 Z" fill="currentColor"/><circle cx="60" cy="20" r="10" fill="currentColor"/></svg>}
+                                      after={<svg width="80" height="80" viewBox="0 0 80 80"><path d="M0 80 L 40 20 L 80 80 Z" fill="#2dd4bf"/><circle cx="60" cy="20" r="10" fill="#facc15"/></svg>}
+                                    />
+                                </div>
                             </div>
-                             <p className="text-slate-300 mt-4">The <strong className="text-teal-400">🪄 Magic Erase</strong> action is extra special: it opens a dedicated editor where you can simply paint over anything you want to remove from your photo.</p>
+                            
+                            <div className="bg-slate-900/30 p-4 rounded-lg mt-6">
+                                <h5 className="font-semibold text-teal-300 mb-3">Interactive Power Tools</h5>
+                                <p className="text-slate-400 text-sm mb-4">These open a special editor, giving you more control over the result.</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <BeforeAfter label="🪄 Magic Erase"
+                                       before={<svg width="80" height="80" viewBox="0 0 80 80" className="text-slate-400"><path d="M10 70 Q 40 50 70 70" stroke="#a16207" strokeWidth="4" fill="none" /><rect x="35" y="45" width="10" height="25" fill="#a16207" /><circle cx="40" cy="30" r="15" fill="#15803d" /></svg>}
+                                       after={<svg width="80" height="80" viewBox="0 0 80 80" className="text-teal-300"><path d="M10 70 Q 40 50 70 70" stroke="#a16207" strokeWidth="4" fill="none" /><circle cx="40" cy="30" r="15" fill="#15803d" /></svg>}
+                                    />
+                                     <BeforeAfter label="🔁 Magic Replace"
+                                       before={<svg width="80" height="80" viewBox="0 0 80 80" className="text-slate-400"><rect x="20" y="20" width="40" height="40" rx="5" fill="#64748b"/><path d="M30 40 h 20 v 10 h -20 z" fill="white"/></svg>}
+                                       after={<svg width="80" height="80" viewBox="0 0 80 80" className="text-teal-300"><rect x="20" y="20" width="40" height="40" rx="5" fill="#64748b"/><path d="M40 30 C 50 30, 50 50, 40 50 C 30 50, 30 30, 40 30" fill="#2dd4bf" /></svg>}
+                                    />
+                                     <BeforeAfter label="🏞️ AI Background"
+                                       before={<svg width="80" height="80" viewBox="0 0 80 80" className="text-slate-400"><rect width="80" height="80" fill="url(#checkerboard)"/><circle cx="40" cy="30" r="10" fill="#94a3b8"/><path d="M30 40 h 20 l -10 30 z" fill="#94a3b8"/><defs><pattern id="checkerboard" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#475569"/><rect x="10" y="10" width="10" height="10" fill="#475569"/></pattern></defs></svg>}
+                                       after={<svg width="80" height="80" viewBox="0 0 80 80" className="text-teal-300"><circle cx="60" cy="20" r="8" fill="#facc15"/><path d="M0 80 L 30 50 L 50 70 L 80 40 V 80 H 0 Z" fill="#15803d"/><circle cx="40" cy="30" r="10" fill="#94a3b8"/><path d="M30 40 h 20 l -10 30 z" fill="#94a3b8"/></svg>}
+                                    />
+                                    <BeforeAfter label="🖌️ Filters"
+                                       before={<svg width="80" height="80" viewBox="0 0 80 80"><path d="M0 80 L 40 20 L 80 80 Z" fill="#2dd4bf"/><circle cx="60" cy="20" r="10" fill="#facc15"/></svg>}
+                                       after={<svg width="80" height="80" viewBox="0 0 80 80"><path d="M0 80 L 40 20 L 80 80 Z" fill="#6b7280"/><circle cx="60" cy="20" r="10" fill="#d1d5db"/></svg>}
+                                    />
+                                    <BeforeAfter label="📏 Crop & Rotate"
+                                      before={<g transform="rotate(-10 40 40)"><rect x="5" y="5" width="70" height="70" fill="#64748b" className="text-slate-400"/></g>}
+                                      after={<g><rect x="5" y="5" width="70" height="70" fill="#64748b" className="text-teal-300"/><path d="M20 20 H 60 V 60 H 20 Z" stroke="white" strokeWidth="2" strokeDasharray="4" fill="none"/></g>}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </TutorialCard>

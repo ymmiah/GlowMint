@@ -12,6 +12,10 @@ import Footer from './components/Footer';
 import TutorialModal from './components/TutorialModal';
 import { editImageWithNanoBanana } from './services/geminiService';
 import type { ImageFile } from './types';
+import MagicReplaceModal from './components/MagicReplaceModal';
+import AIBackgroundModal from './components/AIBackgroundModal';
+import FiltersModal from './components/FiltersModal';
+import CropModal from './components/CropModal';
 
 // --- New Error Display Component ---
 interface AppError {
@@ -87,6 +91,10 @@ const quickActions = [
   { id: 'expandImage', label: 'Expand', emoji: '↔️', title: 'Expand the image with AI-generated content', prompt: "Expand the canvas of this image by 25% on all sides. Fill the new area with AI-generated content that seamlessly and realistically extends the original scene. Maintain the original image's style, lighting, and composition." },
   { id: 'restorePhoto', label: 'Restore', emoji: '🔧', title: 'Restore old, damaged, or faded photos', prompt: "Restore this photo. Remove any scratches, tears, dust, and blemishes. Correct fading and color shifts to bring back the original vibrancy and clarity. Sharpen details where they have been softened by age, but maintain the photo's authentic character." },
   { id: 'magicErase', label: 'Magic Erase', emoji: '🪄', title: 'Select and remove unwanted objects from a photo', prompt: '' },
+  { id: 'magicReplace', label: 'Magic Replace', emoji: '🔁', title: 'Select and replace an object in a photo using a prompt', prompt: '' },
+  { id: 'aiBackground', label: 'AI BG', emoji: '🏞️', title: 'Replace the background of a photo using AI', prompt: '' },
+  { id: 'crop', label: 'Crop', emoji: '📏', title: 'Crop, rotate, and straighten an image', prompt: '' },
+  { id: 'filters', label: 'Filters', emoji: '🖌️', title: 'Apply stylish artistic filters to your photo', prompt: '' },
   { id: 'replaceSky', label: 'Replace Sky', emoji: '☁️', title: 'Replace the sky with a beautiful new one', prompt: 'Realistically replace the sky in this image with a beautiful, dramatic, and partly cloudy blue sky. Ensure the lighting on the rest of the image is adjusted to match the new sky for a seamless and natural look.' },
   { id: 'colorSplash', label: 'Color Pop', emoji: '🎯', title: 'Make the main subject color, background B&W', prompt: 'Identify the main subject in the photo. Keep the main subject in full, vibrant color while converting the entire background to a dramatic black and white. Ensure a clean edge between the color and monochrome areas.' },
   { id: 'straighten', label: 'Straighten', emoji: '📐', title: 'Automatically straighten a crooked photo', prompt: 'Analyze this image for a tilted horizon or perspective distortion and automatically straighten it. Crop the image slightly to remove any empty space created by the rotation, maintaining the original aspect ratio and composition as much as possible.' },
@@ -125,8 +133,13 @@ const App: React.FC = () => {
   // State for before/after comparison
   const [showCompare, setShowCompare] = useState<boolean>(false);
   
-  // State for Magic Erase modal
+  // State for modals
   const [eraseModalState, setEraseModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
+  const [magicReplaceModalState, setMagicReplaceModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
+  const [aiBackgroundModalState, setAIBackgroundModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
+  const [filtersModalState, setFiltersModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
+  const [cropModalState, setCropModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
+
 
   // State for Tutorial modal
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
@@ -152,16 +165,16 @@ const App: React.FC = () => {
     handleImageUpload(updatedImages);
   }, [originalImages, handleImageUpload]);
   
-  const handleEdit = useCallback(async () => {
+  const handleEdit = useCallback(async (customPrompt?: string) => {
     if (originalImages.length === 0) {
       setError({ code: 'VALIDATION_ERROR', message: 'Please upload at least one image to edit.' });
       return;
     }
-     if (originalImages.length > 1 && !prompt) {
+     if (originalImages.length > 1 && !(customPrompt || prompt)) {
       setError({ code: 'VALIDATION_ERROR', message: 'Please describe how you want to combine the images.' });
       return;
     }
-    if (!prompt) {
+    if (!customPrompt && !prompt) {
       setError({ code: 'VALIDATION_ERROR', message: 'Please provide an editing prompt.' });
       return;
     }
@@ -183,7 +196,7 @@ const App: React.FC = () => {
         High: "Please generate the final image in high resolution, aiming for maximum detail and quality.",
       };
       
-      let finalPrompt = `${prompt}. ${resolutionInstructions[resolution]}`;
+      let finalPrompt = `${customPrompt || prompt}. ${resolutionInstructions[resolution]}`;
       if (negativePrompt.trim()) {
         finalPrompt += ` Negative Prompt: Do not include the following elements or concepts: ${negativePrompt}.`;
       }
@@ -230,61 +243,31 @@ const App: React.FC = () => {
       return;
     }
 
+    // Modal triggers
     if (actionId === 'magicErase') {
       setEraseModalState({ isOpen: true, image: originalImages[0] });
       return;
     }
-
-    setIsLoading(true);
-    setError(null);
-    setApiResponseText(null);
-    setShowCompare(false);
-
-    const resolutionInstructions = {
-        Low: "Please generate the final image in low resolution (e.g. for a thumbnail or preview).",
-        Medium: "Please generate the final image in a standard, medium resolution, balancing quality and file size.",
-        High: "Please generate the final image in high resolution, aiming for maximum detail and quality.",
-    };
-
-    let finalPrompt = `${selectedAction.prompt} ${resolutionInstructions[resolution]}`;
-    if (negativePrompt.trim()) {
-      finalPrompt += ` Negative Prompt: Do not include the following elements or concepts: ${negativePrompt}.`;
+     if (actionId === 'magicReplace') {
+      setMagicReplaceModalState({ isOpen: true, image: originalImages[0] });
+      return;
+    }
+    if (actionId === 'aiBackground') {
+      setAIBackgroundModalState({ isOpen: true, image: originalImages[0] });
+      return;
+    }
+    if (actionId === 'filters') {
+      setFiltersModalState({ isOpen: true, image: originalImages[0] });
+      return;
+    }
+    if (actionId === 'crop') {
+      setCropModalState({ isOpen: true, image: originalImages[0] });
+      return;
     }
 
-    try {
-      const imageInput = {
-        base64ImageData: originalImages[0].base64,
-        mimeType: originalImages[0].mimeType,
-      };
-      
-      const result = await editImageWithNanoBanana([imageInput], finalPrompt);
-        
-      if (result.editedImage) {
-        const newImage = `data:image/png;base64,${result.editedImage}`;
-        const newHistory = history.slice(0, historyIndex + 1);
-        setHistory([...newHistory, newImage]);
-        setHistoryIndex(newHistory.length);
-        setApiResponseText(result.text || `The image has been processed with the '${selectedAction.label}' effect.`);
-      } else {
-        setError({ code: 'GENERIC_ERROR', message: `The AI did not return an image for the '${selectedAction.label}' effect. Please try again.` });
-      }
+    handleEdit(selectedAction.prompt);
 
-    } catch (err) {
-      console.error(err);
-      if (err instanceof Error) {
-        const [code, message] = err.message.split('::');
-        if (message && Object.keys(errorDetailsMap).includes(code)) {
-          setError({ code: code as AppError['code'], message });
-        } else {
-          setError({ code: 'GENERIC_ERROR', message: `An unknown error occurred during the '${selectedAction.label}' action.` });
-        }
-      } else {
-        setError({ code: 'GENERIC_ERROR', message: 'An unknown error occurred.' });
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [originalImages, negativePrompt, history, historyIndex, resolution]);
+  }, [originalImages, handleEdit]);
   
   const handleApplyErase = useCallback(async (maskBase64: string) => {
     const { image } = eraseModalState;
@@ -336,6 +319,68 @@ const App: React.FC = () => {
     }
   }, [eraseModalState, history, historyIndex]);
 
+  const handleApplyMagicReplace = useCallback(async (maskBase64: string, replacementPrompt: string) => {
+    const { image } = magicReplaceModalState;
+    if (!image) return;
+
+    setMagicReplaceModalState({ isOpen: false, image: null });
+    setIsLoading(true);
+    setError(null);
+    setApiResponseText(null);
+    setShowCompare(false);
+
+    try {
+        const originalImageInput = { base64ImageData: image.base64, mimeType: image.mimeType };
+        const maskInput = { base64ImageData: maskBase64, mimeType: 'image/png' };
+        
+        const finalPrompt = `You are a professional photo editor. Your task is to perform a content-aware replacement. I have provided an original image and a corresponding mask. The area to be replaced is marked in white on the mask image. Analyze the surrounding pixels, lighting, and context, and seamlessly replace the masked area with the following content: "${replacementPrompt}". Do not alter the rest of the image. Output only the final, fully edited image.`;
+
+        const result = await editImageWithNanoBanana([originalImageInput], finalPrompt, maskInput);
+        
+        if (result.editedImage) {
+            const newImage = `data:image/png;base64,${result.editedImage}`;
+            const newHistory = history.slice(0, historyIndex + 1);
+            setHistory([...newHistory, newImage]);
+            setHistoryIndex(newHistory.length);
+            setApiResponseText(result.text || "The selected object has been magically replaced.");
+        } else {
+            setError({ code: 'GENERIC_ERROR', message: "The AI could not perform the replace action. Please try again." });
+        }
+    } catch (err) {
+        console.error("Magic Replace Error:", err);
+        setError({ code: 'GENERIC_ERROR', message: 'An error occurred during the Magic Replace action.' });
+    } finally {
+        setIsLoading(false);
+    }
+  }, [magicReplaceModalState, history, historyIndex]);
+
+  const handleApplyAIBackground = useCallback(async (backgroundPrompt: string) => {
+    setAIBackgroundModalState({ isOpen: false, image: null });
+    handleEdit(`First, perfectly isolate the main subject from its background in the provided image. Then, create a new, photorealistic background based on this description: "${backgroundPrompt}". Place the isolated subject into the new background. Crucially, you must adjust the lighting, shadows, colors, and perspective of the subject to make it look like it was originally photographed in the new environment. The integration must be seamless and believable. Output only the final composited image.`);
+  }, [handleEdit]);
+
+  const handleApplyFilter = useCallback(async (filterPrompt: string) => {
+    setFiltersModalState({ isOpen: false, image: null });
+    handleEdit(filterPrompt);
+  }, [handleEdit]);
+
+  const handleApplyCrop = useCallback((croppedImageBase64: string) => {
+    setCropModalState({ isOpen: false, image: null });
+    
+    if (!croppedImageBase64) {
+        setError({ code: 'GENERIC_ERROR', message: 'Cropping failed to produce an image.' });
+        return;
+    }
+
+    const newImage = `data:image/png;base64,${croppedImageBase64}`;
+    const newHistory = history.slice(0, historyIndex + 1);
+    setHistory([...newHistory, newImage]);
+    setHistoryIndex(newHistory.length);
+    setApiResponseText("Image cropped successfully.");
+    setShowCompare(false);
+    setError(null);
+  }, [history, historyIndex]);
+
   const handleExamplePrompt = useCallback(() => {
     const randomPrompt = examplePrompts[Math.floor(Math.random() * examplePrompts.length)];
     setPrompt(randomPrompt);
@@ -385,14 +430,16 @@ const App: React.FC = () => {
   }, [currentEditedImage, handleImageUpload]);
 
   const handleUndo = useCallback(() => {
-    if (historyIndex >= 0) {
+    if (historyIndex > 0) {
       setHistoryIndex(prev => prev - 1);
+    } else if (historyIndex === 0) {
+      setHistoryIndex(-1); // Go back to "no image" state
     }
   }, [historyIndex]);
 
   const handleRedo = useCallback(() => {
     if (historyIndex < history.length - 1) {
-      setHistoryIndex(prev => prev - 1);
+      setHistoryIndex(prev => prev + 1);
     }
   }, [historyIndex, history.length]);
 
@@ -429,6 +476,35 @@ const App: React.FC = () => {
               image={eraseModalState.image}
               onClose={() => setEraseModalState({isOpen: false, image: null})}
               onApply={handleApplyErase}
+          />
+      )}
+      {magicReplaceModalState.isOpen && magicReplaceModalState.image && (
+          <MagicReplaceModal 
+              image={magicReplaceModalState.image}
+              onClose={() => setMagicReplaceModalState({isOpen: false, image: null})}
+              onApply={handleApplyMagicReplace}
+          />
+      )}
+      {aiBackgroundModalState.isOpen && aiBackgroundModalState.image && (
+          <AIBackgroundModal 
+              image={aiBackgroundModalState.image}
+              onClose={() => setAIBackgroundModalState({isOpen: false, image: null})}
+              onApply={handleApplyAIBackground}
+          />
+      )}
+      {filtersModalState.isOpen && filtersModalState.image && (
+          <FiltersModal
+              image={filtersModalState.image}
+              onClose={() => setFiltersModalState({isOpen: false, image: null})}
+              onApply={handleApplyFilter}
+          />
+      )}
+      {cropModalState.isOpen && cropModalState.image && (
+          <CropModal
+              image={cropModalState.image}
+              onClose={() => setCropModalState({isOpen: false, image: null})}
+              onApply={handleApplyCrop}
+              onApplyAI={handleEdit}
           />
       )}
       {isTutorialOpen && <TutorialModal onClose={handleCloseTutorial} />}
@@ -555,7 +631,7 @@ const App: React.FC = () => {
 
             <section className="flex flex-col space-y-3 animate-fade-in" style={{animationDelay: '200ms'}}>
               <button
-                onClick={handleEdit}
+                onClick={() => handleEdit()}
                 disabled={originalImages.length === 0 || !prompt || isLoading}
                 className="py-4 px-6 bg-teal-600 text-white font-bold text-lg rounded-xl shadow-lg hover:bg-teal-500 disabled:bg-teal-600/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-teal-500 focus:ring-opacity-50"
                 title="Send your images and prompt to the AI for editing"

@@ -35,6 +35,23 @@ const MagicEraseModal: React.FC<MagicEraseModalProps> = ({ image, onClose, onApp
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isMaskEmpty, setIsMaskEmpty] = useState(true);
 
+  const checkIsMaskEmpty = useCallback(() => {
+    const maskCanvas = maskCanvasRef.current;
+    if (!maskCanvas) return true;
+    const ctx = maskCanvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return true;
+    try {
+      const imageData = ctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+      for (let i = 3; i < imageData.data.length; i += 4) {
+          if (imageData.data[i] > 0) return false; // Found a non-transparent pixel
+      }
+    } catch (e) {
+      console.error("Could not get image data:", e);
+      return true; // Assume empty on error
+    }
+    return true;
+  }, []);
+
   // Initialize canvases
   useEffect(() => {
     const imageCanvas = imageCanvasRef.current;
@@ -57,23 +74,17 @@ const MagicEraseModal: React.FC<MagicEraseModalProps> = ({ image, onClose, onApp
       
       imageCtx.drawImage(img, 0, 0);
 
-      // Calculate initial zoom and pan to fit image in container
       const containerWidth = container.clientWidth;
       const containerHeight = container.clientHeight;
-      const imageWidth = img.naturalWidth;
-      const imageHeight = img.naturalHeight;
-
-      const scaleX = containerWidth / imageWidth;
-      const scaleY = containerHeight / imageHeight;
-      const initialZoom = Math.min(scaleX, scaleY, 1); // Cap initial zoom at 100%
-
-      const scaledWidth = imageWidth * initialZoom;
-      const scaledHeight = imageHeight * initialZoom;
-      const initialPanX = (containerWidth - scaledWidth) / 2;
-      const initialPanY = (containerHeight - scaledHeight) / 2;
+      const scaleX = containerWidth / img.naturalWidth;
+      const scaleY = containerHeight / img.naturalHeight;
+      const initialZoom = Math.min(scaleX, scaleY, 1);
 
       setZoom(initialZoom);
-      setPan({ x: initialPanX, y: initialPanY });
+      setPan({ 
+        x: (containerWidth - img.naturalWidth * initialZoom) / 2,
+        y: (containerHeight - img.naturalHeight * initialZoom) / 2
+      });
       
       const blankMask = maskCtx.createImageData(maskCanvas.width, maskCanvas.height);
       history.current = [blankMask];
@@ -82,7 +93,7 @@ const MagicEraseModal: React.FC<MagicEraseModalProps> = ({ image, onClose, onApp
     };
   }, [image.url]);
 
-  // Restore history state
+  // Restore history state and check if mask is empty
   useEffect(() => {
     const maskCanvas = maskCanvasRef.current;
     if (!maskCanvas) return;
@@ -93,9 +104,10 @@ const MagicEraseModal: React.FC<MagicEraseModalProps> = ({ image, onClose, onApp
       const snapshot = history.current[historyIndex];
       if (snapshot) {
         maskCtx.putImageData(snapshot, 0, 0);
+        setIsMaskEmpty(checkIsMaskEmpty());
       }
     }
-  }, [historyIndex]);
+  }, [historyIndex, checkIsMaskEmpty]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -122,7 +134,7 @@ const MagicEraseModal: React.FC<MagicEraseModalProps> = ({ image, onClose, onApp
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  }, [onClose]); // Redo/undo handlers don't need to be in deps as they're stable
 
   const getDistance = (touches: TouchList | React.TouchList): number => {
     const dx = touches[0].clientX - touches[1].clientX;
@@ -270,14 +282,14 @@ const MagicEraseModal: React.FC<MagicEraseModalProps> = ({ image, onClose, onApp
       const newHistory = history.current.slice(0, historyIndex + 1);
       const newSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
       history.current = [...newHistory, newSnapshot];
-      setHistoryIndex(prev => prev + 1);
-      setIsMaskEmpty(false);
+      setHistoryIndex(newHistory.length);
+      setIsMaskEmpty(checkIsMaskEmpty());
     }
     
     isDrawing.current = false;
     isPanning.current = false;
     setIsGrabbing(false);
-  }, [historyIndex]);
+  }, [historyIndex, checkIsMaskEmpty]);
 
   const handlePointerMove = useCallback((e: React.MouseEvent) => {
       updateBrushPreview(e.clientX, e.clientY, true);
@@ -323,44 +335,32 @@ const MagicEraseModal: React.FC<MagicEraseModalProps> = ({ image, onClose, onApp
     if (history.current.length > 0) {
       history.current = [history.current[0]]; // Keep the blank initial state
       setHistoryIndex(0);
-      setIsMaskEmpty(true);
     }
   }, []);
 
   const handleApply = () => {
     const maskCanvas = maskCanvasRef.current;
     if (!maskCanvas) return;
-    const maskCtx = maskCanvas.getContext('2d');
-    if (!maskCtx) return;
-
-    const maskImageData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
-    const maskData = maskImageData.data;
-
+    
+    // Create a new canvas to draw the final black and white mask
     const finalMaskCanvas = document.createElement('canvas');
     finalMaskCanvas.width = maskCanvas.width;
     finalMaskCanvas.height = maskCanvas.height;
     const finalMaskCtx = finalMaskCanvas.getContext('2d');
     if (!finalMaskCtx) return;
 
-    const finalImageData = finalMaskCtx.createImageData(maskCanvas.width, maskCanvas.height);
-    const finalData = finalImageData.data;
-
-    for (let i = 0; i < maskData.length; i += 4) {
-      // If pixel on mask canvas is not transparent, make it white in final mask
-      if (maskData[i + 3] > 0) {
-        finalData[i] = 255;
-        finalData[i + 1] = 255;
-        finalData[i + 2] = 255;
-        finalData[i + 3] = 255;
-      } else { // Otherwise, make it black
-        finalData[i] = 0;
-        finalData[i + 1] = 0;
-        finalData[i + 2] = 0;
-        finalData[i + 3] = 255;
-      }
-    }
+    // Fill with black first
+    finalMaskCtx.fillStyle = 'black';
+    finalMaskCtx.fillRect(0, 0, finalMaskCanvas.width, finalMaskCanvas.height);
     
-    finalMaskCtx.putImageData(finalImageData, 0, 0);
+    // Composite the drawn mask in white
+    finalMaskCtx.globalCompositeOperation = 'source-over';
+    finalMaskCtx.drawImage(maskCanvas, 0, 0); // Draws the pink mask
+    
+    finalMaskCtx.globalCompositeOperation = 'source-in';
+    finalMaskCtx.fillStyle = 'white';
+    finalMaskCtx.fillRect(0, 0, finalMaskCanvas.width, finalMaskCanvas.height);
+
     const maskBase64 = finalMaskCanvas.toDataURL('image/png').split(',')[1];
     onApply(maskBase64);
   };
