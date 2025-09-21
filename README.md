@@ -30,6 +30,50 @@
 - **AI Model**: Google Gemini `gemini-2.5-flash-image-preview`
 - **Gemini SDK**: [`@google/genai`](https://www.npmjs.com/package/@google/genai)
 
+## 🚀 Getting Started
+
+Follow these steps to set up and run the project locally.
+
+### 1. Clone the Repository
+
+First, clone this repository to your local machine:
+
+```bash
+git clone https://github.com/your-username/glowmint.git
+cd glowmint
+```
+
+### 2. Install Dependencies
+
+Install the required NPM packages:
+
+```bash
+npm install
+```
+
+### 3. Set Up Environment Variables
+
+This project requires a Google Gemini API key.
+
+1.  Create a new file named `.env` in the root of the project directory.
+2.  Add your API key to the `.env` file like this:
+
+```
+API_KEY="YOUR_GOOGLE_GEMINI_API_KEY"
+```
+
+> **Note**: You can get a free API key from the [Google AI for Developers](https://ai.google.dev/) website.
+
+### 4. Run the Development Server
+
+Once the dependencies are installed and the API key is set, you can start the local development server:
+
+```bash
+npm run dev
+```
+
+The application should now be running at `http://localhost:5173`.
+
 ## 📖 How to Use
 
 GlowMint is designed to be intuitive. Follow these simple steps to start creating.
