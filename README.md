@@ -39,7 +39,7 @@ Follow these steps to set up and run the project locally.
 First, clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/glowmint.git
+git clone https://github.com/ymmiah/glowmint.git
 cd glowmint
 ```
 
