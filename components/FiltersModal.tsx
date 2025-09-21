@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { ImageFile } from '../types';
-import { editImageWithNanoBanana } from '../services/geminiService';
+import { editImage } from '../services/geminiService';
 
 interface FiltersModalProps {
   image: ImageFile;
@@ -90,7 +90,7 @@ const FiltersModal: React.FC<FiltersModalProps> = ({ image, onClose, onApply }) 
         try {
           // Add instruction for a low-res preview to speed up generation
           const previewPrompt = `${filter.prompt} IMPORTANT: Generate this as a low-resolution, small thumbnail-sized preview. Speed is more important than quality.`;
-          const result = await editImageWithNanoBanana([imageInput], previewPrompt);
+          const result = await editImage([imageInput], previewPrompt);
 
           if (isCancelled) break;
 

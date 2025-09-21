@@ -10,7 +10,7 @@ import ResolutionSelector from './components/ResolutionSelector';
 import MagicEraseModal from './components/MagicEraseModal';
 import Footer from './components/Footer';
 import TutorialModal from './components/TutorialModal';
-import { editImageWithNanoBanana } from './services/geminiService';
+import { editImage } from './services/geminiService';
 import type { ImageFile } from './types';
 import MagicReplaceModal from './components/MagicReplaceModal';
 import AIBackgroundModal from './components/AIBackgroundModal';
@@ -201,7 +201,7 @@ const App: React.FC = () => {
         finalPrompt += ` Negative Prompt: Do not include the following elements or concepts: ${negativePrompt}.`;
       }
       
-      const result = await editImageWithNanoBanana(imageInputs, finalPrompt);
+      const result = await editImage(imageInputs, finalPrompt);
         
       if (result.editedImage) {
         const newImage = `data:image/png;base64,${result.editedImage}`;
@@ -291,7 +291,7 @@ const App: React.FC = () => {
 
         const finalPrompt = `You are a professional photo editor. Your task is to perform a content-aware fill (inpainting). I have provided an original image and a corresponding mask. The area to be removed and filled is marked in white on the mask image. Analyze the surrounding pixels and seamlessly fill the masked area with realistic, context-appropriate content. Do not alter the rest of the image. Output only the final, fully edited image.`;
 
-        const result = await editImageWithNanoBanana([originalImageInput], finalPrompt, maskInput);
+        const result = await editImage([originalImageInput], finalPrompt, maskInput);
         
         if (result.editedImage) {
             const newImage = `data:image/png;base64,${result.editedImage}`;
@@ -335,7 +335,7 @@ const App: React.FC = () => {
         
         const finalPrompt = `You are a professional photo editor. Your task is to perform a content-aware replacement. I have provided an original image and a corresponding mask. The area to be replaced is marked in white on the mask image. Analyze the surrounding pixels, lighting, and context, and seamlessly replace the masked area with the following content: "${replacementPrompt}". Do not alter the rest of the image. Output only the final, fully edited image.`;
 
-        const result = await editImageWithNanoBanana([originalImageInput], finalPrompt, maskInput);
+        const result = await editImage([originalImageInput], finalPrompt, maskInput);
         
         if (result.editedImage) {
             const newImage = `data:image/png;base64,${result.editedImage}`;
@@ -347,8 +347,17 @@ const App: React.FC = () => {
             setError({ code: 'GENERIC_ERROR', message: "The AI could not perform the replace action. Please try again." });
         }
     } catch (err) {
-        console.error("Magic Replace Error:", err);
-        setError({ code: 'GENERIC_ERROR', message: 'An error occurred during the Magic Replace action.' });
+        console.error(err);
+        if (err instanceof Error) {
+            const [code, message] = err.message.split('::');
+            if (message && Object.keys(errorDetailsMap).includes(code)) {
+                setError({ code: code as AppError['code'], message });
+            } else {
+                setError({ code: 'GENERIC_ERROR', message: `An unknown error occurred during the Magic Replace action.` });
+            }
+        } else {
+            setError({ code: 'GENERIC_ERROR', message: 'An unknown error occurred.' });
+        }
     } finally {
         setIsLoading(false);
     }
