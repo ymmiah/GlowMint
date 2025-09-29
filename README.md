@@ -1,6 +1,6 @@
 # ✨ GlowMint - AI Photo Editor
 
-![GlowMint Banner](https://img.shields.io/badge/GlowMint-AI%20Photo%20Editor-14b8a6?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJoLTcgdy03IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjEuNSI+PHBhdGggc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNOS44MTMgMTUuOTA0TDkgMTguNzVsLS44MTMtMi44NDZhNC41IDQuNSAwIDAwLTMuMDktMy4wOUwyLjI1IDEybDIuODQ2LS44MTNhNC41IDQuNSAwIDAwMy4wOS0zLjA5TDkgNS4yNWwuODEzIDIuODQ2YTQuNSA0LjUgMCAwMDMuMDkgMy4wOUwxNS43NSAxMmwtMi44NDYuODEzYTQuNSA0LjUgMCAwMC0zLjA5IDMuMDl6TTE4LjI1OSA4LjcxNUwxOCAzLjc1bC0uMjU5LTEuMDM1YTMuMzc1IDMuMzc1IDAgMDAtMi40NTUtMi40NTZMMTQuMjUgNmwxLjAzNi0uMjU5YTMuMzc1IDMuMzc1IDAgMDAyLjQ1NS0yLjQ1NkwxOCAyLjI1bC4yNTkgMS4wMzVhMy4zNzUgMy4zNzUgMCAwMDIuNDU2IDIuNDU2TDIxLjc1IDZsLTEuMDM1LjI1OWEzLjM3NSAzLjM3NSAwIDAwLTIuNDU2IDIuNDU2ek0xNi44OTggMjAuNTI4TDE2LjI1IDIyLjVsLS42NDgtMS45NzJhNC41IDQuNSAwIDAxLTMuMDktMy4wOWwtMS45NzItLjY0OCAxLjk3Mi0uNjQ4YTQuNSA0LjUgMCAwMTMuMDktMy4wOWwuNjQ4LTEuOTcyLjY0OCAxLjk3MmE0LjUgNC41IDAgMDEzLjA5IDMuMDlsMS45NzIuNjQ4LTEuOTcyLjY0OGE0LjUgNC41IDAgMDEtMy4wOSAzLjA5eiIgLz48L3N2Zz4=)
+![GlowMint Banner](https://img.shields.io/badge/GlowMint-AI%20Photo%20Editor-14b8a6?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJoLTcgdy03IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjEuNSI+PHBhdGggc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNOS44MTMgMTUuOTA0TDkgMTguNzVsLS44MTMtMi44NDZhNC41IDQuNSAwIDAwLTMuMDktMy4wOUwyLjI1IDEybDIuODQ2LS44MTNhNC41IDQuNSAwIDAwMy4wOS0zLjA5TDkgNS4yNWwuODEzIDIuODQ2YTQuNSA0LjUgMCAwMDMuMDkgMy4wOUwxNS43NSAxMmwtMi44NDYuODEzYTQuNSA0LjUgMCAwMC0zLjA5IDMuMDl6TTE4LjI1OSA4LjcxNUwxOCAzLjc1bC0uMjU5LTEuMDM1YTMuMzc1IDMuMzc1IDAgMDAtMi40NTUtMi40NTZMMTQuMjUgNmwxLjAzNi0uMjU5YTMuMzc1IDMuMzc1IDAgMDAyLjQ1NS0yLjQ1NkwxOCAyLjI1bC4yNTkgMS4wMzVhMy4zNzUgMy4zNzUgMCAwMDIuNDU2IDIuNDU2TDIxLjc1IDZsLTEuMDM1LjI1OWEzLjMzc1IDMuMzc1IDAgMDAtMi40NTYgMi40NTZek0xNi44OTggMjAuNTI4TDE2LjI1IDIyLjVsLS42NDgtMS45NzJhNC41IDQuNSAwIDAxLTMuMDktMy4wOWwtMS45NzItLjY0OCAxLjk3Mi0uNjQ4YTQuNSA0LjUgMCAwMTMuMDktMy4wOWwuNjQ4LTEuOTcyLjY0OCAxLjk3MmE0LjUgNC41IDAgMDEzLjA5IDMuMDlsMS45NzIuNjQ4LTEuOTcyLjY4YTQuNSA0LjUgMCAwMS0zLjA5IDMuMDl6IiAvPjwvc3ZnPg==)
 [![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg?style=flat-square)](LICENSE.md)
 [![React Version](https://img.shields.io/badge/React-^19.1.1-blue.svg?style=flat-square&logo=react)](https://react.dev/)
 [![Gemini API](https://img.shields.io/badge/Google-Gemini%20API-4285F4.svg?style=flat-square&logo=google)](https://ai.google.dev/)
@@ -12,7 +12,9 @@
 ## 🚀 Key Features
 
 - **Prompt-Based Editing**: Describe any edit in natural language, from "add a cat wearing a party hat" to "make this look like a vintage photograph from the 1970s."
+- **Unified Display & Comparison**: A large, focused display area with multiple view modes ('Toggle', 'Slider', 'Side-by-Side') for a clear and flexible comparison between original and edited images.
 - **Multi-Image Composition**: Upload multiple photos and instruct the AI on how to combine them into collages, blends, or composites.
+- **Batch Processing**: Apply the same edit to multiple images at once. View your results in an easy-to-navigate carousel.
 - **One-Click Quick Actions**: Access a library of professionally crafted prompts for common tasks like background removal, colorization, photo restoration, and applying artistic styles.
 - **🪄 Magic Erase**: A dedicated inpainting tool that allows you to simply paint over and remove any unwanted objects from your photos.
 - **🔁 Magic Replace**: Select an area and replace it with anything you can imagine using a text prompt.
@@ -20,9 +22,8 @@
 - **🎨 Artistic Filters**: Apply a variety of stylish, AI-powered filters with live previews.
 - **📏 Crop & Rotate**: Precisely crop, rotate, and straighten your images with an intuitive interface and AI assistance.
 - **Advanced Controls**: Fine-tune your results with negative prompts to exclude unwanted elements and select from multiple output resolutions (Low, Medium, High).
-- **Interactive Comparison**: Use the before-and-after slider to instantly see the impact of your edits.
 - **Iterative Workflow**: Use any generated image as the new input for further edits, allowing you to layer effects and refine your creation.
-- **Full History**: Never lose your progress with unlimited undo/redo capabilities.
+- **Full History**: Never lose your progress with unlimited undo/redo capabilities in single edit mode.
 
 ## 🛠️ Technology Stack
 
@@ -38,7 +39,7 @@ GlowMint is designed to be intuitive. Follow these simple steps to start creatin
 
 - Click the upload area or drag and drop one or more images (PNG, JPG, WEBP).
 - **Single Image**: Best for enhancements, style changes, or object removal.
-- **Multiple Images**: Use a text prompt to describe how the AI should combine them.
+- **Multiple Images**: Use a text prompt to describe how the AI should combine them, or use Batch Mode to apply the same effect to all of them.
 
 ### Step 2: Choose Your Edit
 
@@ -59,8 +60,8 @@ You have two powerful options for editing your photos:
 -   Your edited image will appear in the result panel. From there, you can:
     -   **Download** the final image.
     -   **Use as Input** to perform more edits on the new image.
-    -   **Compare** the result with the original using an interactive slider.
-    -   **Undo/Redo** your edits to experiment freely.
+    -   **Compare** the result with the original using multiple views (slider, side-by-side).
+    -   **Undo/Redo** your edits to experiment freely (in single-edit mode).
 
 ## 💡 Pro Tips
 
@@ -73,6 +74,27 @@ You have two powerful options for editing your photos:
 ## 📜 Changelog
 
 All notable changes to this project will be documented in this section.
+
+### [1.2.0] - 2025-09-29
+
+#### ✨ UI Overhaul & Batch Processing
+- **Unified Display Area**: Replaced the previous side-by-side layout with a single, large, focused display area for viewing original and edited images, creating a cleaner and more immersive experience.
+- **New View Modes**: Introduced flexible ways to compare images within the unified viewer:
+    - **Toggle View**: A simple "Original" / "Edited" toggle to quickly switch between the two versions.
+    - **Slider View**: An interactive slider for precise, pixel-level comparison.
+    - **Side-by-Side View**: A classic two-panel view for a direct look at both images.
+- **Streamlined Controls**: Organized all result-related actions (Download, Use as Input, View Mode selection) into a single, intuitive control bar below the display area.
+- **Batch Processing Mode**: Added a powerful 'Batch' mode to apply the same edit to multiple images at once, complete with a progress bar and easy navigation through the results carousel.
+
+### [1.1.1] - 2025-09-18
+
+#### ✨ Feature Refinement: Paper Photo Fix
+
+-   **Prompt Engineering**: Overhauled the "Paper Fix" quick action with a highly detailed, multi-stage "Digital Restoration Specialist" prompt.
+-   **Improved Accuracy**: The new prompt forces the AI to follow a strict 4-stage process (Analysis, Plan, Execution, Verification) to ensure consistent, high-quality results.
+-   **Advanced Flaw Removal**: Explicitly targets and removes common issues like glare, reflections, and motion blur.
+-   **Smarter Object Removal**: Implemented non-negotiable logic for the AI to remove a person *and* the fingers covering them, preventing leftover artifacts.
+-   **"Perfect Scan" Goal**: The entire process is now geared towards producing a result that is indistinguishable from a high-resolution flatbed scan.
 
 ### [1.1.0] - 2025-09-10
 

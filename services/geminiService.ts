@@ -50,7 +50,7 @@ export const generateText = async (prompt: string, responseSchema?: any): Promis
 };
 
 
-export const editImage = async (
+export const editImageWithNanoBanana = async (
   images: ImageInput[],
   prompt: string,
   mask?: ImageInput

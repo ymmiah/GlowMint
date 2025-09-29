@@ -4,11 +4,9 @@ interface ImageDisplayProps {
   imageUrl: string | null;
   isLoading?: boolean;
   onViewFullscreen?: (url: string) => void;
-  onCompare?: () => void;
-  canCompare?: boolean;
 }
 
-const ImageDisplay: React.FC<ImageDisplayProps> = ({ imageUrl, isLoading = false, onViewFullscreen, onCompare, canCompare }) => {
+const ImageDisplay: React.FC<ImageDisplayProps> = ({ imageUrl, isLoading = false, onViewFullscreen }) => {
   const ariaTitle = "Edited result";
 
   return (
@@ -35,19 +33,6 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ imageUrl, isLoading = false
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5" />
                   </svg>
-                </button>
-              )}
-               {onCompare && canCompare && (
-                <button
-                    onClick={onCompare}
-                    className="py-3 px-5 bg-slate-900/60 backdrop-blur-sm rounded-full text-white hover:bg-slate-900/80 transition-all duration-200 flex items-center gap-2 font-semibold transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-slate-200"
-                    aria-label="Compare with original"
-                    title="Compare with original"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25" />
-                    </svg>
-                    <span>Compare</span>
                 </button>
               )}
           </div>
