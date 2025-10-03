@@ -159,7 +159,7 @@ Before outputting, review your work against this checklist:
   { id: 'hdr', label: 'HDR', emoji: '🌟', title: 'Apply a High Dynamic Range (HDR) effect', prompt: "Apply a photorealistic High Dynamic Range (HDR) effect to this image. Significantly expand the dynamic range by balancing deep, detailed shadows with bright, well-defined highlights. Enhance local contrast to make textures and details pop. The colors should be vibrant and saturated, but still look natural and not overly processed. The final image should be crisp, clear, and full of depth." },
   { id: 'bAndW', label: 'B & W', emoji: '🔳', title: 'Convert to dramatic black and white', prompt: "Convert this photo into a powerful, high-contrast black and white image. Create deep, rich blacks and brilliant, clean whites, losing some mid-tone detail for a dramatic, punchy, and graphic effect. Emphasize textures, shapes, and tonal gradations." },
   { id: 'sepia', label: 'Sepia', emoji: '📜', title: 'Apply a classic sepia tone', prompt: "Apply a classic sepia tone to this photo to give it an authentic, vintage feel of an early 20th-century photograph. The toning should be warm, with rich brown and yellow hues, while preserving a good range of contrast. Add a very subtle grain to enhance the nostalgic, antique look." },
-  { id: 'pixelate', label: '16-Bit Art', emoji: '👾', title: 'Turn the photo into 16-bit pixel art', prompt: "Recreate this photo as 16-bit era pixel art. The final image should be blocky with clearly defined square pixels. Use a limited, vibrant color palette derived from the original. Simplify complex shapes and textures into pixel clusters. This should look like a scene from a classic SNES or Genesis game. Do not just apply a mosaic filter; redraw the image using pixel art techniques to capture its essence." },
+  { id: 'pixelate', label: '16-Bit Art', emoji: '👾', title: 'Turn the photo into 16-bit pixel art', prompt: "Recreate this photo as 16-bit era pixel art. The final image should be blocky with clearly defined square pixels. Use a limited, vibrant color palette from the original. Simplify complex shapes and textures into pixel clusters. This should look like a scene from a classic SNES or Genesis game. Do not just apply a mosaic filter; redraw the image using pixel art techniques to capture its essence." },
   { id: 'goldenHour', label: 'Golden Hour', emoji: '🌇', title: 'Apply a warm, golden hour lighting effect', prompt: "Bathe this photo in the warm, soft, and diffused light of the golden hour. Enhance the warm tones like yellows, oranges, and reds. Cast long, soft shadows. The overall mood should be serene and beautiful, as if taken just after sunrise or before sunset." },
   { id: 'neon', label: 'Neon', emoji: '🌃', title: 'Give the image a futuristic neon/cyberpunk look', prompt: "Transform this photo with a vibrant neon noir or cyberpunk aesthetic. Add glowing neon highlights to edges and key features. Shift the color palette towards deep blues, purples, and hot pinks. Introduce a sense of futuristic grit and atmosphere, perhaps with subtle rain or haze effects." },
   { id: 'miniature', label: 'Miniature', emoji: '🤏', title: 'Apply a tilt-shift/miniature effect', prompt: "Apply a tilt-shift or miniature faking effect to this photo. Create a narrow band of sharp focus across the main subject, then apply a strong, gradual blur to the areas above and below the focal plane. Increase color saturation and contrast to enhance the illusion that the scene is a small-scale model." },
@@ -572,7 +572,7 @@ const App: React.FC = () => {
     setToggleViewState('edited');
   }, [history, historyIndex]);
 
-  const handleApplyStyleRemix = useCallback(async (styleImage: ImageFile) => {
+  const handleApplyStyleRemix = useCallback(async (styleImage: ImageFile, remixPrompt: string) => {
     const { image: contentImage } = styleRemixModalState;
     if (!contentImage || !styleImage) return;
 
@@ -584,7 +584,11 @@ const App: React.FC = () => {
     setToggleViewState('edited');
     
     try {
-        const styleRemixPrompt = `You are a master artist specializing in style transfer. You will be given multiple images. The first image is the 'content' image. The second image is the 'style' image. Your task is to completely redraw the 'content' image in the artistic style of the 'style' image. Analyze the style image's color palette, textures, brush strokes, and overall mood, and apply it to the content image. The final output should retain the recognizable composition of the content image but look as if it were created by the artist of the style image.`;
+        let styleRemixPrompt = `You are a master artist specializing in style transfer. You will be given multiple images. The first image is the 'content' image. The second image is the 'style' image. Your task is to completely redraw the 'content' image in the artistic style of the 'style' image. Analyze the style image's color palette, textures, brush strokes, and overall mood, and apply it to the content image. The final output should retain the recognizable composition of the content image but look as if it were created by the artist of the style image.`;
+
+        if (remixPrompt.trim()) {
+            styleRemixPrompt += `\n\nIMPORTANT USER REFINEMENT: The user has provided specific instructions. Pay close attention to this: "${remixPrompt}". Prioritize this instruction when transferring the style.`;
+        }
 
         const imageInputs = [
             { base64ImageData: contentImage.base64, mimeType: contentImage.mimeType },
