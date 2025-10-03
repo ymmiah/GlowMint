@@ -23,28 +23,18 @@ const TutorialCard: React.FC<{
   </section>
 );
 
-const BeforeAfter: React.FC<{
-  before: React.ReactNode;
-  after: React.ReactNode;
-  label: string;
-}> = ({ before, after, label }) => (
-  <div className="bg-slate-900/50 p-3 rounded-lg flex flex-col items-center h-full">
-    <div className="flex gap-2 justify-center items-center">
-      <div className="w-28 h-28 bg-slate-700 rounded-lg flex flex-col items-center justify-center p-2 text-center overflow-hidden">
-        {before}
-        <span className="text-xs font-bold text-slate-400 mt-2">Before</span>
-      </div>
-      <div className="flex items-center justify-center text-teal-400">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-      </div>
-      <div className="w-28 h-28 bg-slate-700 rounded-lg flex flex-col items-center justify-center p-2 text-center overflow-hidden">
-        {after}
-        <span className="text-xs font-bold text-teal-300 mt-2">After</span>
-      </div>
-    </div>
-    <h5 className="font-semibold text-white mt-3 text-sm">{label}</h5>
+const ToolExample: React.FC<{
+  emoji: string;
+  name: string;
+  description: string;
+}> = ({ emoji, name, description }) => (
+  <div className="bg-slate-900/50 p-4 rounded-lg text-center flex flex-col items-center h-full">
+    <span className="text-4xl" aria-hidden="true">{emoji}</span>
+    <h5 className="font-semibold text-white mt-2 text-sm">{name}</h5>
+    <p className="text-xs text-slate-400 mt-1 flex-grow">{description}</p>
   </div>
 );
+
 
 const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
   useEffect(() => {
@@ -119,7 +109,29 @@ const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                     </div>
                 </TutorialCard>
 
-                <TutorialCard step="3" title="Generate & Review" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>}>
+                <TutorialCard
+                    step="3"
+                    title="Unleash Power Tools"
+                    icon={
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.17 48.17 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                        </svg>
+                    }
+                >
+                    <p className="text-slate-300 mb-4">
+                    For precise control, GlowMint offers interactive tools. Access them via the <strong className="text-teal-400">Quick Actions</strong> panel when in <strong className="text-teal-400">Single Edit mode</strong>.
+                    </p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <ToolExample emoji="🪄" name="Magic Erase" description="Paint over and remove unwanted objects, people, or text." />
+                        <ToolExample emoji="🔁" name="Magic Replace" description="Select an area and tell the AI what to replace it with." />
+                        <ToolExample emoji="🎭" name="Style Remix" description="Apply the complete artistic style of one image to another." />
+                        <ToolExample emoji="🏞️" name="AI Background" description="Instantly replace your photo's background with an AI scene." />
+                        <ToolExample emoji="📏" name="Crop & Rotate" description="Straighten, rotate, and crop your image with precision." />
+                        <ToolExample emoji="🖌️" name="Filters" description="Browse a gallery of live, AI-generated previews for artistic filters." />
+                    </div>
+                </TutorialCard>
+
+                <TutorialCard step="4" title="Generate & Review" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>}>
                      <p className="text-slate-300 mb-4">Once you're ready, hit the <strong className="text-teal-400">✨ Generate</strong> button. The AI will process your request and your edited masterpiece(s) will appear in the result panel.</p>
                      
                      <div className="bg-slate-900/30 p-4 rounded-lg mt-4">

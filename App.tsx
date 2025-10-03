@@ -1,5 +1,4 @@
 
-
 import React, { useState, useCallback, useMemo } from 'react';
 import Header from './components/Header';
 import ImageUploader from './components/ImageUploader';
@@ -18,6 +17,7 @@ import MagicReplaceModal from './components/MagicReplaceModal';
 import AIBackgroundModal from './components/AIBackgroundModal';
 import FiltersModal from './components/FiltersModal';
 import CropModal from './components/CropModal';
+import StyleRemixModal from './components/StyleRemixModal';
 
 // --- New Error Display Component ---
 interface AppError {
@@ -152,6 +152,8 @@ Before outputting, review your work against this checklist:
   { id: 'portrait', label: 'Portrait', emoji: '👤', title: 'Apply portrait mode (background blur)', prompt: "Apply a portrait mode effect to this image. Keep the main subject in sharp focus and apply a beautiful, creamy bokeh/blur to the background." },
   { id: 'vintage', label: 'Vintage', emoji: '🎞️', title: 'Give the photo a vintage film look', prompt: "Give this photo a vintage look, like an old film photograph from the 1970s. Adjust colors to be warm and faded, add subtle film grain, and a slight vignette effect." },
   { id: 'cartoon', label: 'Cartoonify', emoji: '💥', title: 'Turn the photo into a cartoon', prompt: "Convert this photo into a cartoon. Use bold outlines and vibrant colors to give it a comic-book feel." },
+  { id: 'stickerify', label: 'Sticker-fy', emoji: '🏷️', title: 'Isolate the subject and turn it into a sticker with a transparent background', prompt: "First, perfectly isolate the main subject of this image from its background. Then, create a clean, bold white outline around the subject. The outline should be approximately 5% of the subject's width. Finally, add a subtle drop shadow behind the subject and its outline to make it pop. The final output MUST have a transparent background and be in PNG format." },
+  { id: 'styleRemix', label: 'Style Remix', emoji: '🎭', title: 'Apply the artistic style of another image to your photo', prompt: '' },
   { id: 'sunlight', label: 'Add Light', emoji: '☀️', title: 'Add dramatic sunlight to the image', prompt: "Add warm, golden hour sunlight streaming into the image from the top left. Create realistic light rays and lens flare effects that interact with the subjects in the photo." },
   { id: 'sketch', label: 'Sketch', emoji: '✏️', title: 'Convert the photo into a pencil sketch', prompt: "Convert this photo into a detailed black and white pencil sketch. Emphasize lines, shading, and texture to resemble a hand-drawn artwork." },
   { id: 'hdr', label: 'HDR', emoji: '🌟', title: 'Apply a High Dynamic Range (HDR) effect', prompt: "Apply a photorealistic High Dynamic Range (HDR) effect to this image. Significantly expand the dynamic range by balancing deep, detailed shadows with bright, well-defined highlights. Enhance local contrast to make textures and details pop. The colors should be vibrant and saturated, but still look natural and not overly processed. The final image should be crisp, clear, and full of depth." },
@@ -202,6 +204,7 @@ const App: React.FC = () => {
   const [aiBackgroundModalState, setAIBackgroundModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
   const [filtersModalState, setFiltersModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
   const [cropModalState, setCropModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
+  const [styleRemixModalState, setStyleRemixModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
 
   // State for Tutorial modal
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
@@ -440,6 +443,10 @@ const App: React.FC = () => {
             setCropModalState({ isOpen: true, image: originalImages[0] });
             return;
         }
+        if (actionId === 'styleRemix') {
+            setStyleRemixModalState({ isOpen: true, image: originalImages[0] });
+            return;
+        }
     }
     
     if (editMode === 'single') {
@@ -564,6 +571,53 @@ const App: React.FC = () => {
     setViewMode('toggle');
     setToggleViewState('edited');
   }, [history, historyIndex]);
+
+  const handleApplyStyleRemix = useCallback(async (styleImage: ImageFile) => {
+    const { image: contentImage } = styleRemixModalState;
+    if (!contentImage || !styleImage) return;
+
+    setStyleRemixModalState({ isOpen: false, image: null });
+    setIsLoading(true);
+    setError(null);
+    setApiResponseText(null);
+    setViewMode('toggle');
+    setToggleViewState('edited');
+    
+    try {
+        const styleRemixPrompt = `You are a master artist specializing in style transfer. You will be given multiple images. The first image is the 'content' image. The second image is the 'style' image. Your task is to completely redraw the 'content' image in the artistic style of the 'style' image. Analyze the style image's color palette, textures, brush strokes, and overall mood, and apply it to the content image. The final output should retain the recognizable composition of the content image but look as if it were created by the artist of the style image.`;
+
+        const imageInputs = [
+            { base64ImageData: contentImage.base64, mimeType: contentImage.mimeType },
+            { base64ImageData: styleImage.base64, mimeType: styleImage.mimeType },
+        ];
+        
+        const result = await editImageWithNanoBanana(imageInputs, styleRemixPrompt);
+        
+        if (result.editedImage) {
+            const newImage = `data:image/png;base64,${result.editedImage}`;
+            const newHistory = history.slice(0, historyIndex + 1);
+            setHistory([...newHistory, newImage]);
+            setHistoryIndex(newHistory.length);
+            setApiResponseText(result.text || "Style successfully remixed!");
+        } else {
+            setError({ code: 'GENERIC_ERROR', message: 'The AI did not return an image for the style remix. Please try a different style image.' });
+        }
+    } catch (err) {
+      console.error("Style Remix Error:", err);
+      if (err instanceof Error) {
+        const [code, message] = err.message.split('::');
+        if (message && Object.keys(errorDetailsMap).includes(code)) {
+          setError({ code: code as AppError['code'], message });
+        } else {
+          setError({ code: 'GENERIC_ERROR', message: err.message });
+        }
+      } else {
+        setError({ code: 'GENERIC_ERROR', message: 'An unknown error occurred during Style Remix.' });
+      }
+    } finally {
+        setIsLoading(false);
+    }
+  }, [styleRemixModalState, history, historyIndex]);
 
   const handleExamplePrompt = useCallback(() => {
     const randomPrompt = examplePrompts[Math.floor(Math.random() * examplePrompts.length)];
@@ -705,6 +759,13 @@ const App: React.FC = () => {
               onApplyAI={handleEdit}
           />
       )}
+      {styleRemixModalState.isOpen && styleRemixModalState.image && (
+          <StyleRemixModal
+              image={styleRemixModalState.image}
+              onClose={() => setStyleRemixModalState({ isOpen: false, image: null })}
+              onApply={handleApplyStyleRemix}
+          />
+      )}
       {isTutorialOpen && <TutorialModal onClose={handleCloseTutorial} />}
       <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow">
@@ -824,9 +885,9 @@ const App: React.FC = () => {
                       <button
                         key={action.id}
                         onClick={() => handleQuickAction(action.id)}
-                        disabled={!canDoQuickAction || (editMode === 'batch' && ['magicErase', 'magicReplace', 'aiBackground', 'filters', 'crop'].includes(action.id))}
+                        disabled={!canDoQuickAction || (editMode === 'batch' && ['magicErase', 'magicReplace', 'aiBackground', 'filters', 'crop', 'styleRemix'].includes(action.id))}
                         className="p-2 bg-slate-700 text-white font-semibold text-xs rounded-lg shadow-lg hover:bg-slate-600 disabled:bg-slate-700/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 flex flex-col items-center justify-center gap-1 text-center h-16 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-75"
-                        title={action.title + ((editMode === 'batch' && ['magicErase', 'magicReplace', 'aiBackground', 'filters', 'crop'].includes(action.id)) ? ' (Single Edit Mode Only)' : '')}
+                        title={action.title + ((editMode === 'batch' && ['magicErase', 'magicReplace', 'aiBackground', 'filters', 'crop', 'styleRemix'].includes(action.id)) ? ' (Single Edit Mode Only)' : '')}
                       >
                         <span className="text-xl" aria-hidden="true">{action.emoji}</span>
                         <span className="leading-tight">{action.label}</span>

@@ -75,6 +75,11 @@ You have two powerful options for editing your photos:
 
 All notable changes to this project will be documented in this section.
 
+### [1.2.1] - 2025-10-03
+
+#### 🐛 Bug Fixes
+- **Style Remix Reliability**: Refactored the "Style Remix" feature to use a dedicated prompt workflow, bypassing generic modifications that caused inconsistent results. This ensures the complex style transfer instructions are sent to the AI without interference, significantly improving the feature's reliability.
+
 ### [1.2.0] - 2025-09-29
 
 #### ✨ UI Overhaul & Batch Processing
