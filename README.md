@@ -77,8 +77,9 @@ All notable changes to this project will be documented in this section.
 
 ### [1.2.1] - 2025-10-03
 
-#### 🐛 Bug Fixes
-- **Style Remix Reliability**: Refactored the "Style Remix" feature to use a dedicated prompt workflow, bypassing generic modifications that caused inconsistent results. This ensures the complex style transfer instructions are sent to the AI without interference, significantly improving the feature's reliability.
+#### ✨ New Features
+- **Artistic Remix**: Added the "Style Remix" tool, allowing users to apply the complete artistic style of one image to another. The feature includes a dedicated modal for uploading a style image.
+- **Sticker-fy**: Introduced the "Sticker-fy" quick action, which automatically isolates the main subject of a photo, adds a white outline and drop shadow, and provides a final image with a transparent background.
 
 ### [1.2.0] - 2025-09-29
 
