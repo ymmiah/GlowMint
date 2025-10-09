@@ -179,12 +179,10 @@ Distributed under the MIT License. See `LICENSE.md` for more information.
 
 All notable changes to this project will be documented in this section.
 
-### [1.4.0] - 2025-10-12
+### [1.3.0] - 2025-10-09
 
 #### ✨ New Features
 - **Enhanced Image Uploader**: Added robust drag-and-drop functionality to upload multiple images simultaneously. The uploader now displays individual progress for each file and shows clear error states for failed uploads, such as exceeding the file size limit.
-
-### [1.3.0] - 2025-10-09
 
 #### 🏗️ Architecture & Refactoring
 - **Centralized Theming System**: Refactored the entire UI theming system into a dedicated `/theme` directory. All theme variables and logic are now centralized in TypeScript, removing hardcoded styles from `index.html`. This makes adding or modifying themes significantly easier and more maintainable.
