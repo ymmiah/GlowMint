@@ -54,6 +54,10 @@ const MagicReplaceModal: React.FC<MagicReplaceModalProps> = ({ image, onClose, o
     return true;
   }, []);
 
+  // FIX: Moved handleUndo and handleRedo before the useEffect that uses them.
+  const handleUndo = useCallback(() => { if (historyIndex > 0) setHistoryIndex(historyIndex - 1); }, [historyIndex]);
+  const handleRedo = useCallback(() => { if (historyIndex < history.current.length - 1) setHistoryIndex(historyIndex + 1); }, [historyIndex]);
+
   useEffect(() => {
     const imageCanvas = imageCanvasRef.current;
     const maskCanvas = maskCanvasRef.current;
@@ -125,7 +129,7 @@ const MagicReplaceModal: React.FC<MagicReplaceModalProps> = ({ image, onClose, o
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  }, [onClose, handleUndo, handleRedo]);
 
   const getDistance = (touches: TouchList | React.TouchList): number => Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
   const getMidpoint = (touches: TouchList | React.TouchList): { x: number; y: number } => ({ x: (touches[0].clientX + touches[1].clientX) / 2, y: (touches[0].clientY + touches[1].clientY) / 2 });
@@ -249,8 +253,6 @@ const MagicReplaceModal: React.FC<MagicReplaceModalProps> = ({ image, onClose, o
     setPan({ x: mouseX - ((mouseX - pan.x) / zoom) * newZoom, y: mouseY - ((mouseY - pan.y) / zoom) * newZoom });
   };
 
-  const handleUndo = useCallback(() => { if (historyIndex > 0) setHistoryIndex(historyIndex - 1); }, [historyIndex]);
-  const handleRedo = useCallback(() => { if (historyIndex < history.current.length - 1) setHistoryIndex(historyIndex + 1); }, [historyIndex]);
   const handleResetMask = useCallback(() => { if (history.current.length > 0) { history.current = [history.current[0]]; setHistoryIndex(0); } }, []);
 
   const handleApply = () => {
@@ -277,41 +279,41 @@ const MagicReplaceModal: React.FC<MagicReplaceModalProps> = ({ image, onClose, o
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/80 flex flex-col justify-center items-center z-50 backdrop-blur-lg animate-fade-in p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-2xl w-full max-w-6xl h-full max-h-[90vh] flex flex-col p-4">
-        <div className="flex-shrink-0 flex flex-col xl:flex-row justify-between items-center gap-4 p-2 mb-4 rounded-md bg-slate-900/50">
-             <h2 className="text-xl font-bold text-slate-200">Magic Replace: Paint to replace</h2>
+    <div className="fixed inset-0 bg-[--color-bg]/80 flex flex-col justify-center items-center z-50 backdrop-blur-lg animate-fade-in p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="bg-[--color-surface-1] border border-[--color-border] rounded-lg shadow-2xl w-full max-w-6xl h-full max-h-[90vh] flex flex-col p-4">
+        <div className="flex-shrink-0 flex flex-col xl:flex-row justify-between items-center gap-4 p-2 mb-4 rounded-md bg-[--color-surface-inset]/50">
+             <h2 className="text-xl font-bold text-[--color-text-primary]">Magic Replace: Paint to replace</h2>
             <div className="flex-grow w-full xl:w-auto">
                  <PromptInput prompt={replacementPrompt} setPrompt={setReplacementPrompt} isDisabled={false} rows={1} placeholder="Replace selection with... e.g., 'a cute kitten'"/>
             </div>
             <div className="flex items-center gap-4 flex-wrap justify-center">
-                <div className="flex items-center gap-2 border-l border-r border-slate-700 px-4">
-                    <button onClick={() => setTool('pan')} className={`p-2 rounded-md transition-all ${tool === 'pan' ? 'bg-teal-600' : 'bg-slate-700'}`} title="Pan (V or Space)"><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" /></svg></button>
-                    <button onClick={() => setTool('brush')} className={`p-2 rounded-md transition-all ${tool === 'brush' ? 'bg-teal-600' : 'bg-slate-700'}`} title="Brush (B)"><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
-                    <button onClick={() => setTool('eraser')} className={`p-2 rounded-md transition-all ${tool === 'eraser' ? 'bg-teal-600' : 'bg-slate-700'}`} title="Eraser (E)"><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-1.5 1.5-1.5m-6.5-1.5H5.25m11.9-3.664A2.25 2.25 0 0 0 15 2.25h-1.5a2.25 2.25 0 0 0-2.25 2.25v1.5A2.25 2.25 0 0 0 13.5 9H15a2.25 2.25 0 0 0 2.25-2.25 2.25 2.25 0 0 0-.084-3.664M6.75 18a2.25 2.25 0 0 1-2.25-2.25V13.5A2.25 2.25 0 0 1 6.75 11.25h1.5a2.25 2.25 0 0 1 2.25 2.25v2.25A2.25 2.25 0 0 1 9 18h-2.25Z" /></svg></button>
+                <div className="flex items-center gap-2 border-l border-r border-[--color-border] px-4">
+                    <button onClick={() => setTool('pan')} className={`p-2 rounded-md transition-all ${tool === 'pan' ? 'bg-[--color-primary] text-[--color-primary-text]' : 'bg-[--color-surface-2]'}`} title="Pan (V or Space)"><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" /></svg></button>
+                    <button onClick={() => setTool('brush')} className={`p-2 rounded-md transition-all ${tool === 'brush' ? 'bg-[--color-primary] text-[--color-primary-text]' : 'bg-[--color-surface-2]'}`} title="Brush (B)"><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
+                    <button onClick={() => setTool('eraser')} className={`p-2 rounded-md transition-all ${tool === 'eraser' ? 'bg-[--color-primary] text-[--color-primary-text]' : 'bg-[--color-surface-2]'}`} title="Eraser (E)"><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-1.5 1.5-1.5m-6.5-1.5H5.25m11.9-3.664A2.25 2.25 0 0 0 15 2.25h-1.5a2.25 2.25 0 0 0-2.25 2.25v1.5A2.25 2.25 0 0 0 13.5 9H15a2.25 2.25 0 0 0 2.25-2.25 2.25 2.25 0 0 0-.084-3.664M6.75 18a2.25 2.25 0 0 1-2.25-2.25V13.5A2.25 2.25 0 0 1 6.75 11.25h1.5a2.25 2.25 0 0 1 2.25 2.25v2.25A2.25 2.25 0 0 1 9 18h-2.25Z" /></svg></button>
                 </div>
                 <div className="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[--color-text-tertiary]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                     <input type="range" min="5" max="200" value={brushSize} onChange={(e) => setBrushSize(Number(e.target.value))} disabled={tool === 'pan'} className="w-32" title="Brush Size"/>
                 </div>
                  <div className="flex items-center gap-2">
-                    <button onClick={handleUndo} disabled={historyIndex <= 0} className="p-2 bg-slate-700 rounded-md disabled:opacity-50" title="Undo (Ctrl+Z)"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 15l-3-3m0 0l3-3m-3 3h8a5 5 0 015 5v1" /></svg></button>
-                    <button onClick={handleRedo} disabled={historyIndex >= history.current.length - 1} className="p-2 bg-slate-700 rounded-md disabled:opacity-50" title="Redo (Ctrl+Y)"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 15l3-3m0 0l-3-3m3 3H8a5 5 0 00-5 5v1" /></svg></button>
-                    <button onClick={handleResetMask} disabled={isMaskEmpty} className="p-2 bg-slate-700 rounded-md disabled:opacity-50" title="Clear Mask"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+                    <button onClick={handleUndo} disabled={historyIndex <= 0} className="p-2 bg-[--color-surface-2] rounded-md disabled:opacity-50" title="Undo (Ctrl+Z)"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 15l-3-3m0 0l3-3m-3 3h8a5 5 0 015 5v1" /></svg></button>
+                    <button onClick={handleRedo} disabled={historyIndex >= history.current.length - 1} className="p-2 bg-[--color-surface-2] rounded-md disabled:opacity-50" title="Redo (Ctrl+Y)"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 15l3-3m0 0l-3-3m3 3H8a5 5 0 00-5 5v1" /></svg></button>
+                    <button onClick={handleResetMask} disabled={isMaskEmpty} className="p-2 bg-[--color-surface-2] rounded-md disabled:opacity-50" title="Clear Mask"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
                 </div>
             </div>
             <div className="flex items-center gap-4">
-                <button onClick={onClose} className="py-2 px-5 bg-slate-600 hover:bg-slate-500 font-bold rounded-lg">Cancel</button>
-                <button onClick={handleApply} disabled={isMaskEmpty || !replacementPrompt.trim()} className="py-2 px-5 bg-teal-600 hover:bg-teal-500 font-bold rounded-lg disabled:bg-teal-600/50 disabled:cursor-not-allowed">Apply Replace</button>
+                <button onClick={onClose} className="py-2 px-5 bg-[--color-surface-3] hover:bg-[--color-text-placeholder] font-bold rounded-lg">Cancel</button>
+                <button onClick={handleApply} disabled={isMaskEmpty || !replacementPrompt.trim()} className="py-2 px-5 bg-[--color-primary] hover:bg-[--color-primary-hover] text-[--color-primary-text] font-bold rounded-lg disabled:bg-[--color-primary]/50 disabled:cursor-not-allowed">Apply Replace</button>
             </div>
         </div>
-        <div ref={containerRef} className={`flex-grow bg-slate-900 rounded-lg overflow-hidden relative ${getCursor()}`} onMouseDown={startInteraction} onMouseMove={handlePointerMove} onMouseUp={stopInteraction} onMouseLeave={handlePointerLeave} onTouchStart={startInteraction} onTouchMove={continueInteraction} onTouchEnd={stopInteraction} onWheel={handleWheel}>
+        <div ref={containerRef} className={`flex-grow bg-[--color-surface-inset] rounded-lg overflow-hidden relative ${getCursor()}`} onMouseDown={startInteraction} onMouseMove={handlePointerMove} onMouseUp={stopInteraction} onMouseLeave={handlePointerLeave} onTouchStart={startInteraction} onTouchMove={continueInteraction} onTouchEnd={stopInteraction} onWheel={handleWheel}>
             <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`, transformOrigin: '0 0' }}>
               <canvas ref={imageCanvasRef} className="absolute top-0 left-0" />
               <canvas ref={maskCanvasRef} className="absolute top-0 left-0" />
             </div>
              {tool !== 'pan' && (
-              <div className={`absolute pointer-events-none rounded-full border-2 ${tool === 'brush' ? 'border-white bg-teal-500/30' : 'border-red-500 bg-red-500/20'} ${brushPreview.visible ? 'opacity-100' : 'opacity-0'}`} style={{ width: brushSize, height: brushSize, left: brushPreview.x, top: brushPreview.y, transform: `translate(-50%, -50%)` }}/>
+              <div className={`absolute pointer-events-none rounded-full border-2 ${tool === 'brush' ? 'border-white bg-[--color-primary]/30' : 'border-red-500 bg-red-500/20'} ${brushPreview.visible ? 'opacity-100' : 'opacity-0'}`} style={{ width: brushSize, height: brushSize, left: brushPreview.x, top: brushPreview.y, transform: `translate(-50%, -50%)` }}/>
             )}
         </div>
       </div>

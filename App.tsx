@@ -1,4 +1,5 @@
 
+
 import React, { useState, useCallback, useMemo } from 'react';
 import Header from './components/Header';
 import ImageUploader from './components/ImageUploader';
@@ -16,7 +17,8 @@ import type { ImageFile } from './types';
 import MagicReplaceModal from './components/MagicReplaceModal';
 import AIBackgroundModal from './components/AIBackgroundModal';
 import FiltersModal from './components/FiltersModal';
-import CropModal from './components/CropModal';
+// FIX: Import CropModal as a named import as it does not have a default export.
+import { CropModal } from './components/CropModal';
 import StyleRemixModal from './components/StyleRemixModal';
 
 // --- New Error Display Component ---
@@ -29,30 +31,30 @@ const errorDetailsMap: Record<AppError['code'], { emoji: string; title: string; 
   INVALID_KEY: {
     emoji: '🔑',
     title: 'API Key Issue',
-    borderColor: 'border-yellow-500/80',
-    bgColor: 'bg-yellow-900/50',
-    textColor: 'text-yellow-200',
+    borderColor: 'border-[--color-warning-border]',
+    bgColor: 'bg-[--color-warning-bg]/50',
+    textColor: 'text-[--color-warning-text]',
   },
   QUOTA_EXCEEDED: {
     emoji: '⏳',
     title: 'Quota Reached',
-    borderColor: 'border-orange-500/80',
-    bgColor: 'bg-orange-900/50',
-    textColor: 'text-orange-200',
+    borderColor: 'border-[--color-quota-border]',
+    bgColor: 'bg-[--color-quota-bg]/50',
+    textColor: 'text-[--color-quota-text]',
   },
   GENERIC_ERROR: {
     emoji: '🤖',
     title: 'Oops! Something went wrong',
-    borderColor: 'border-red-600/80',
-    bgColor: 'bg-red-900/50',
-    textColor: 'text-red-200',
+    borderColor: 'border-[--color-error-border]',
+    bgColor: 'bg-[--color-error-bg]/50',
+    textColor: 'text-[--color-error-text]',
   },
   VALIDATION_ERROR: {
     emoji: '🖼️',
     title: 'Input Needed',
-    borderColor: 'border-teal-500/80',
-    bgColor: 'bg-teal-900/50',
-    textColor: 'text-teal-200',
+    borderColor: 'border-[--color-info-border]',
+    bgColor: 'bg-[--color-info-bg]/50',
+    textColor: 'text-[--color-info-text]',
   },
 };
 
@@ -724,7 +726,7 @@ const App: React.FC = () => {
   const canDoQuickAction = (editMode === 'single' && originalImages.length === 1 && !isLoading) || (editMode === 'batch' && originalImages.length > 0 && !isBatchProcessing);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans flex flex-col">
+    <div className="min-h-screen bg-[--color-bg] text-[--color-text-primary] font-sans flex flex-col">
       {(isLoading || isBatchProcessing) && <LoadingOverlay />}
       {fullscreenImage && <FullscreenModal imageUrl={fullscreenImage} onClose={handleCloseFullscreen} />}
       {eraseModalState.isOpen && eraseModalState.image && (
@@ -777,9 +779,9 @@ const App: React.FC = () => {
           
           {/* Controls Column */}
           <div className="lg:col-span-2 flex flex-col space-y-6">
-            <section className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 p-6 rounded-2xl shadow-lg animate-fade-in">
+            <section className="bg-[--color-surface-1]/50 backdrop-blur-xl border border-[--color-border]/50 p-6 rounded-2xl shadow-lg animate-fade-in">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-3">
-                <span className="bg-teal-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-md">1</span>
+                <span className="bg-[--color-primary] text-[--color-primary-text] w-8 h-8 rounded-full flex items-center justify-center font-bold text-md">1</span>
                 Upload Photos
               </h2>
               <ImageUploader
@@ -790,25 +792,25 @@ const App: React.FC = () => {
               />
             </section>
             
-            <section className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 p-6 rounded-2xl shadow-lg animate-fade-in" style={{animationDelay: '100ms'}}>
+            <section className="bg-[--color-surface-1]/50 backdrop-blur-xl border border-[--color-border]/50 p-6 rounded-2xl shadow-lg animate-fade-in" style={{animationDelay: '100ms'}}>
               <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-bold flex items-center gap-3">
-                    <span className="bg-teal-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-md">2</span>
+                    <span className="bg-[--color-primary] text-[--color-primary-text] w-8 h-8 rounded-full flex items-center justify-center font-bold text-md">2</span>
                     Choose Your Edit
                   </h2>
-                  <div className="bg-slate-700 p-1 rounded-full flex items-center text-sm font-semibold">
-                      <button onClick={() => setEditMode('single')} className={`px-3 py-1 rounded-full transition-colors ${editMode === 'single' ? 'bg-teal-600 text-white' : 'text-slate-300 hover:bg-slate-600'}`}>Single</button>
-                      <button onClick={() => setEditMode('batch')} disabled={originalImages.length <= 1} className={`px-3 py-1 rounded-full transition-colors ${editMode === 'batch' ? 'bg-teal-600 text-white' : 'text-slate-300 hover:bg-slate-600'} disabled:text-slate-500 disabled:hover:bg-transparent disabled:cursor-not-allowed`}>Batch</button>
+                  <div className="bg-[--color-surface-2] p-1 rounded-full flex items-center text-sm font-semibold">
+                      <button onClick={() => setEditMode('single')} className={`px-3 py-1 rounded-full transition-colors ${editMode === 'single' ? 'bg-[--color-primary-hover] text-[--color-primary-text]' : 'text-[--color-text-secondary] hover:bg-[--color-surface-3]'}`}>Single</button>
+                      <button onClick={() => setEditMode('batch')} disabled={originalImages.length <= 1} className={`px-3 py-1 rounded-full transition-colors ${editMode === 'batch' ? 'bg-[--color-primary-hover] text-[--color-primary-text]' : 'text-[--color-text-secondary] hover:bg-[--color-surface-3]'} disabled:text-[--color-text-placeholder] disabled:hover:bg-transparent disabled:cursor-not-allowed`}>Batch</button>
                   </div>
               </div>
 
                <div className="mb-4">
                   <div className="flex justify-between items-center mb-2">
-                    <h3 className="font-semibold text-slate-300">Edit with a Prompt</h3>
+                    <h3 className="font-semibold text-[--color-text-secondary]">Edit with a Prompt</h3>
                     {editMode === 'single' && (
                     <button
                       onClick={handleExamplePrompt}
-                      className="text-sm font-semibold text-teal-400 hover:text-teal-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 rounded px-2 py-1 transform hover:-translate-y-0.5"
+                      className="text-sm font-semibold text-[--color-primary] hover:text-[--color-primary-hover] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[--color-primary-focus] focus:ring-opacity-50 rounded px-2 py-1 transform hover:-translate-y-0.5"
                       aria-label="Generate an example prompt"
                       title="Get a random suggestion for an edit prompt"
                     >
@@ -833,18 +835,18 @@ const App: React.FC = () => {
                 <div className="mt-6">
                   <button
                     onClick={() => setShowAdvanced(prev => !prev)}
-                    className="w-full flex justify-between items-center text-left p-2 -mx-2 rounded-md hover:bg-slate-700/50 transition-colors duration-200"
+                    className="w-full flex justify-between items-center text-left p-2 -mx-2 rounded-md hover:bg-[--color-surface-2]/50 transition-colors duration-200"
                     aria-expanded={showAdvanced}
                     aria-controls="advanced-options-panel"
                   >
-                    <span className="font-semibold text-slate-300">Advanced Options</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 text-slate-400 transition-transform duration-300 ${showAdvanced ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <span className="font-semibold text-[--color-text-secondary]">Advanced Options</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 text-[--color-text-tertiary] transition-transform duration-300 ${showAdvanced ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
                   {showAdvanced && (
                     <div id="advanced-options-panel" className="mt-4 animate-fade-in">
-                      <label htmlFor="negative-prompt-input" className="block text-sm font-medium text-slate-300 mb-2">
+                      <label htmlFor="negative-prompt-input" className="block text-sm font-medium text-[--color-text-secondary] mb-2">
                         Negative Prompt
                       </label>
                       <PromptInput
@@ -855,21 +857,21 @@ const App: React.FC = () => {
                         rows={2}
                         placeholder="e.g., text, watermarks, blurry, extra limbs"
                       />
-                      <p className="text-xs text-slate-500 mt-2">Describe what you don't want to see in the edited image.</p>
+                      <p className="text-xs text-[--color-text-placeholder] mt-2">Describe what you don't want to see in the edited image.</p>
                     </div>
                   )}
                 </div>
 
-                 <div className="h-px bg-slate-700 my-6"></div>
+                 <div className="h-px bg-[--color-border] my-6"></div>
                  <div>
-                  <h3 className="font-semibold text-slate-300 mb-3">Quick Actions</h3>
+                  <h3 className="font-semibold text-[--color-text-secondary] mb-3">Quick Actions</h3>
                   <div className="grid grid-cols-4 gap-2">
                     {featuredActions.map(action => (
                       <button
                         key={action.id}
                         onClick={() => handleQuickAction(action.id)}
                         disabled={!canDoQuickAction}
-                        className="p-2 bg-teal-700/50 border border-teal-600 text-white font-semibold text-xs rounded-lg shadow-lg hover:bg-teal-600/60 disabled:bg-slate-700/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 flex flex-col items-center justify-center gap-1 text-center h-16 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-75"
+                        className="p-2 bg-[--color-primary-hover]/50 border border-[--color-primary] text-[--color-text-primary] font-semibold text-xs rounded-lg shadow-lg hover:bg-[--color-primary-hover]/60 disabled:bg-[--color-surface-2]/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 flex flex-col items-center justify-center gap-1 text-center h-16 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[--color-primary-focus] focus:ring-opacity-75"
                         title={action.title}
                       >
                         <span className="text-xl" aria-hidden="true">{action.emoji}</span>
@@ -879,9 +881,9 @@ const App: React.FC = () => {
                   </div>
 
                   <div className="my-4 flex items-center gap-2">
-                    <div className="h-px bg-slate-700 flex-grow"></div>
-                    <span className="text-xs text-slate-500">More Effects</span>
-                    <div className="h-px bg-slate-700 flex-grow"></div>
+                    <div className="h-px bg-[--color-border] flex-grow"></div>
+                    <span className="text-xs text-[--color-text-placeholder]">More Effects</span>
+                    <div className="h-px bg-[--color-border] flex-grow"></div>
                   </div>
 
                   <div className="grid grid-cols-4 gap-2">
@@ -890,7 +892,7 @@ const App: React.FC = () => {
                         key={action.id}
                         onClick={() => handleQuickAction(action.id)}
                         disabled={!canDoQuickAction || (editMode === 'batch' && ['magicErase', 'magicReplace', 'aiBackground', 'filters', 'crop', 'styleRemix'].includes(action.id))}
-                        className="p-2 bg-slate-700 text-white font-semibold text-xs rounded-lg shadow-lg hover:bg-slate-600 disabled:bg-slate-700/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 flex flex-col items-center justify-center gap-1 text-center h-16 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-75"
+                        className="p-2 bg-[--color-surface-2] text-[--color-text-primary] font-semibold text-xs rounded-lg shadow-lg hover:bg-[--color-surface-3] disabled:bg-[--color-surface-2]/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 flex flex-col items-center justify-center gap-1 text-center h-16 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[--color-primary-focus] focus:ring-opacity-75"
                         title={action.title + ((editMode === 'batch' && ['magicErase', 'magicReplace', 'aiBackground', 'filters', 'crop', 'styleRemix'].includes(action.id)) ? ' (Single Edit Mode Only)' : '')}
                       >
                         <span className="text-xl" aria-hidden="true">{action.emoji}</span>
@@ -905,7 +907,7 @@ const App: React.FC = () => {
               <button
                 onClick={handlePrimaryAction}
                 disabled={originalImages.length === 0 || (!prompt && editMode === 'single') || isLoading || isBatchProcessing}
-                className="py-4 px-6 bg-teal-600 text-white font-bold text-lg rounded-xl shadow-lg hover:bg-teal-500 disabled:bg-teal-600/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-teal-500 focus:ring-opacity-50"
+                className="py-4 px-6 bg-[--color-primary] text-[--color-primary-text] font-bold text-lg rounded-xl shadow-lg hover:bg-[--color-primary-hover] disabled:bg-[--color-primary]/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[--color-primary-focus] focus:ring-opacity-50"
                 title="Send your images and prompt to the AI for editing"
               >
                 {isLoading || isBatchProcessing ? 'Generating...' : `✨ Generate ${editMode === 'batch' ? `Batch (${originalImages.length})` : 'Edit'}`}
@@ -914,7 +916,7 @@ const App: React.FC = () => {
               <button
                 onClick={handleReset}
                 disabled={!canReset || isLoading || isBatchProcessing}
-                className="py-3 px-6 bg-transparent border border-slate-600 hover:bg-slate-700 text-slate-300 font-bold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all duration-200 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                className="py-3 px-6 bg-transparent border border-[--color-surface-3] hover:bg-[--color-surface-2] text-[--color-text-secondary] font-bold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-all duration-200 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[--color-surface-3]"
                 aria-label="Reset all fields and images"
                 title="Clear the uploaded images, prompt, and result"
               >
@@ -926,15 +928,15 @@ const App: React.FC = () => {
           </div>
           
           {/* Display Column */}
-          <div className="lg:col-span-3 bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 p-6 rounded-2xl shadow-lg min-h-[500px] lg:min-h-0 flex flex-col animate-fade-in" style={{animationDelay: '300ms'}}>
+          <div className="lg:col-span-3 bg-[--color-surface-1]/50 backdrop-blur-xl border border-[--color-border]/50 p-6 rounded-2xl shadow-lg min-h-[500px] lg:min-h-0 flex flex-col animate-fade-in" style={{animationDelay: '300ms'}}>
              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-slate-300">Result</h2>
+                <h2 className="text-xl font-bold text-[--color-text-secondary]">Result</h2>
                 {editMode === 'single' ? (
                 <div className="flex items-center space-x-2">
                     <button
                     onClick={handleUndo}
                     disabled={historyIndex < 0 || isLoading}
-                    className="p-2 bg-slate-700 rounded-md hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                    className="p-2 bg-[--color-surface-2] rounded-md hover:bg-[--color-surface-3] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[--color-surface-3]"
                     aria-label="Undo last edit"
                     title="Undo last edit"
                     >
@@ -945,7 +947,7 @@ const App: React.FC = () => {
                     <button
                     onClick={handleRedo}
                     disabled={historyIndex >= history.length - 1 || isLoading}
-                    className="p-2 bg-slate-700 rounded-md hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                    className="p-2 bg-[--color-surface-2] rounded-md hover:bg-[--color-surface-3] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[--color-surface-3]"
                     aria-label="Redo last edit"
                     title="Redo last edit"
                     >
@@ -956,23 +958,23 @@ const App: React.FC = () => {
                 </div>
                 ) : isBatchProcessing ? (
                   <div className="w-48 flex items-center gap-2">
-                    <span className="text-sm text-slate-400 font-semibold">Processing...</span>
-                    <div className="w-full bg-slate-700 rounded-full h-2.5">
-                        <div className="bg-teal-500 h-2.5 rounded-full" style={{ width: `${batchProgress}%`, transition: 'width 0.5s ease-in-out' }}></div>
+                    <span className="text-sm text-[--color-text-tertiary] font-semibold">Processing...</span>
+                    <div className="w-full bg-[--color-surface-2] rounded-full h-2.5">
+                        <div className="bg-[--color-primary] h-2.5 rounded-full" style={{ width: `${batchProgress}%`, transition: 'width 0.5s ease-in-out' }}></div>
                     </div>
                   </div>
                 ) : currentItem.total > 0 ? (
-                    <div className="text-sm font-semibold text-slate-400">Result {currentItem.currentIndex + 1} of {currentItem.total}</div>
+                    <div className="text-sm font-semibold text-[--color-text-tertiary]">Result {currentItem.currentIndex + 1} of {currentItem.total}</div>
                 ) : null}
             </div>
             
             <div className="flex-grow flex flex-col">
               {/* Main Display Area */}
-              <div className="flex-grow w-full aspect-square bg-slate-900/50 rounded-xl border-2 border-slate-700 flex items-center justify-center overflow-hidden relative">
+              <div className="flex-grow w-full aspect-square bg-[--color-surface-inset]/50 rounded-xl border-2 border-[--color-border] flex items-center justify-center overflow-hidden relative">
                 {!currentItem.edited && originalImages.length === 0 ? (
-                    <div className="flex-grow flex flex-col items-center justify-center text-center text-slate-500 p-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                        <p className="mt-4 text-lg font-semibold text-slate-400">Let's create something amazing</p>
+                    <div className="flex-grow flex flex-col items-center justify-center text-center text-[--color-text-placeholder] p-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-[--color-surface-3]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        <p className="mt-4 text-lg font-semibold text-[--color-text-tertiary]">Let's create something amazing</p>
                         <p className="mt-1 text-sm">Upload one or more photos to start editing with AI.</p>
                     </div>
                 ) : !currentItem.edited && originalImages.length > 0 ? (
@@ -984,8 +986,8 @@ const App: React.FC = () => {
                   />
                 ) : viewMode === 'side-by-side' && currentItem.original && currentItem.edited ? (
                     <div className="grid grid-cols-2 gap-2 w-full h-full p-2">
-                        <div className="relative bg-black rounded-lg overflow-hidden"><img src={currentItem.original} className="w-full h-full object-contain"/><span className="absolute top-1 left-1 text-xs bg-slate-800/80 text-white px-2 py-0.5 rounded-full">Original</span></div>
-                        <div className="relative bg-black rounded-lg overflow-hidden"><img src={currentItem.edited} className="w-full h-full object-contain"/><span className="absolute top-1 left-1 text-xs bg-teal-800/80 text-white px-2 py-0.5 rounded-full">Edited</span></div>
+                        <div className="relative bg-black rounded-lg overflow-hidden"><img src={currentItem.original} className="w-full h-full object-contain"/><span className="absolute top-1 left-1 text-xs bg-[--color-surface-1]/80 text-[--color-text-primary] px-2 py-0.5 rounded-full">Original</span></div>
+                        <div className="relative bg-black rounded-lg overflow-hidden"><img src={currentItem.edited} className="w-full h-full object-contain"/><span className="absolute top-1 left-1 text-xs bg-[--color-primary]/80 text-[--color-primary-text] px-2 py-0.5 rounded-full">Edited</span></div>
                     </div>
                 ) : (
                     <ImageDisplay
@@ -998,7 +1000,7 @@ const App: React.FC = () => {
                     <div className="absolute inset-y-0 inset-x-0 flex items-center justify-between p-4 pointer-events-none">
                         <button
                             onClick={handlePrevResult}
-                            className="p-3 bg-slate-900/60 backdrop-blur-sm rounded-full text-white hover:bg-slate-800/80 transition-all shadow-lg pointer-events-auto transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            className="p-3 bg-[--color-surface-inset]/60 backdrop-blur-sm rounded-full text-[--color-text-primary] hover:bg-[--color-surface-1]/80 transition-all shadow-lg pointer-events-auto transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
                             aria-label="Previous result"
                             title="Previous result"
                         >
@@ -1006,7 +1008,7 @@ const App: React.FC = () => {
                         </button>
                         <button
                             onClick={handleNextResult}
-                            className="p-3 bg-slate-900/60 backdrop-blur-sm rounded-full text-white hover:bg-slate-800/80 transition-all shadow-lg pointer-events-auto transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            className="p-3 bg-[--color-surface-inset]/60 backdrop-blur-sm rounded-full text-[--color-text-primary] hover:bg-[--color-surface-1]/80 transition-all shadow-lg pointer-events-auto transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
                             aria-label="Next result"
                             title="Next result"
                         >
@@ -1021,26 +1023,26 @@ const App: React.FC = () => {
                 {currentItem.edited && !isLoading && (
                   <div className="flex items-center justify-center flex-wrap gap-4 animate-fade-in">
                     {viewMode === 'toggle' && (
-                      <div className="bg-slate-700 p-1 rounded-full flex items-center text-sm font-semibold">
+                      <div className="bg-[--color-surface-2] p-1 rounded-full flex items-center text-sm font-semibold">
                         <button 
                           onClick={() => setToggleViewState('original')} 
-                          className={`px-4 py-1.5 rounded-full transition-colors ${toggleViewState === 'original' ? 'bg-teal-600 text-white' : 'text-slate-300 hover:bg-slate-600'}`}
+                          className={`px-4 py-1.5 rounded-full transition-colors ${toggleViewState === 'original' ? 'bg-[--color-primary-hover] text-[--color-primary-text]' : 'text-[--color-text-secondary] hover:bg-[--color-surface-3]'}`}
                         >
                           Original
                         </button>
                         <button 
                           onClick={() => setToggleViewState('edited')}
-                          className={`px-4 py-1.5 rounded-full transition-colors ${toggleViewState === 'edited' ? 'bg-teal-600 text-white' : 'text-slate-300 hover:bg-slate-600'}`}
+                          className={`px-4 py-1.5 rounded-full transition-colors ${toggleViewState === 'edited' ? 'bg-[--color-primary-hover] text-[--color-primary-text]' : 'text-[--color-text-secondary] hover:bg-[--color-surface-3]'}`}
                         >
                           Edited
                         </button>
                       </div>
                     )}
                     
-                    <div className="bg-slate-900 border border-slate-700 p-1 rounded-full flex items-center text-sm font-semibold">
-                        <button onClick={() => setViewMode('toggle')} className={`px-3 py-1.5 rounded-full transition-colors ${viewMode === 'toggle' ? 'bg-slate-600' : 'text-slate-400 hover:text-white'}`}>Toggle</button>
-                        <button onClick={() => setViewMode('slider')} className={`px-3 py-1.5 rounded-full transition-colors ${viewMode === 'slider' ? 'bg-slate-600' : 'text-slate-400 hover:text-white'}`}>Slider</button>
-                        <button onClick={() => setViewMode('side-by-side')} className={`px-3 py-1.5 rounded-full transition-colors ${viewMode === 'side-by-side' ? 'bg-slate-600' : 'text-slate-400 hover:text-white'}`}>Side-by-Side</button>
+                    <div className="bg-[--color-surface-inset] border border-[--color-border] p-1 rounded-full flex items-center text-sm font-semibold">
+                        <button onClick={() => setViewMode('toggle')} className={`px-3 py-1.5 rounded-full transition-colors ${viewMode === 'toggle' ? 'bg-[--color-surface-3]' : 'text-[--color-text-tertiary] hover:text-[--color-text-primary]'}`}>Toggle</button>
+                        <button onClick={() => setViewMode('slider')} className={`px-3 py-1.5 rounded-full transition-colors ${viewMode === 'slider' ? 'bg-[--color-surface-3]' : 'text-[--color-text-tertiary] hover:text-[--color-text-primary]'}`}>Slider</button>
+                        <button onClick={() => setViewMode('side-by-side')} className={`px-3 py-1.5 rounded-full transition-colors ${viewMode === 'side-by-side' ? 'bg-[--color-surface-3]' : 'text-[--color-text-tertiary] hover:text-[--color-text-primary]'}`}>Side-by-Side</button>
                     </div>
                   </div>
                 )}
@@ -1049,7 +1051,7 @@ const App: React.FC = () => {
                   <div className="w-full flex flex-col sm:flex-row items-center gap-3 animate-fade-in">
                      <button
                         onClick={handleDownload}
-                        className="w-full py-3 px-4 bg-green-600 text-white font-bold rounded-lg shadow-md hover:bg-green-500 transition-all duration-200 flex items-center justify-center space-x-2 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-green-400"
+                        className="w-full py-3 px-4 bg-[--color-success] text-white font-bold rounded-lg shadow-md hover:bg-[--color-success-hover] transition-all duration-200 flex items-center justify-center space-x-2 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-green-400"
                         aria-label="Download edited image"
                         title="Save the edited image to your device"
                     >
@@ -1060,7 +1062,7 @@ const App: React.FC = () => {
                     </button>
                      <button
                         onClick={handleUseAsInput}
-                        className="w-full py-3 px-4 bg-teal-600 text-white font-bold rounded-lg shadow-md hover:bg-teal-500 transition-all duration-200 flex items-center justify-center space-x-2 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                        className="w-full py-3 px-4 bg-[--color-primary] text-[--color-primary-text] font-bold rounded-lg shadow-md hover:bg-[--color-primary-hover] transition-all duration-200 flex items-center justify-center space-x-2 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[--color-primary-focus]"
                         aria-label="Use edited image as new input"
                         title="Use this edited image as the new original for further edits"
                     >
@@ -1073,9 +1075,9 @@ const App: React.FC = () => {
                 )}
                 
                 {apiResponseText && !isLoading && editMode === 'single' && (
-                  <div className="mt-2 p-4 bg-slate-900/70 rounded-lg border border-slate-700 animate-fade-in">
-                    <p className="text-sm text-slate-400 font-semibold mb-2">AI Commentary:</p>
-                    <p className="text-slate-300 italic">"{apiResponseText}"</p>
+                  <div className="mt-2 p-4 bg-[--color-surface-inset]/70 rounded-lg border border-[--color-border] animate-fade-in">
+                    <p className="text-sm text-[--color-text-tertiary] font-semibold mb-2">AI Commentary:</p>
+                    <p className="text-[--color-text-secondary] italic">"{apiResponseText}"</p>
                   </div>
                 )}
               </div>

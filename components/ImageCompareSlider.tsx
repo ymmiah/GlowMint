@@ -59,7 +59,7 @@ const ImageCompareSlider: React.FC<ImageCompareSliderProps> = ({ beforeImageUrl,
   return (
     <div
       ref={containerRef}
-      className="w-full h-full relative select-none overflow-hidden rounded-xl border-2 border-slate-700 group"
+      className="w-full h-full relative select-none overflow-hidden rounded-xl border-2 border-[--color-border] group"
       onMouseUp={handleInteractionEnd}
       onMouseLeave={handleInteractionEnd}
     >
@@ -95,7 +95,7 @@ const ImageCompareSlider: React.FC<ImageCompareSliderProps> = ({ beforeImageUrl,
           className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-10 h-10 bg-white/80 rounded-full shadow-lg flex items-center justify-center backdrop-blur-sm border-2 border-white/50 group-hover:opacity-100 opacity-80 transition-opacity"
           aria-hidden="true"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[--color-bg]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25" />
           </svg>
         </div>

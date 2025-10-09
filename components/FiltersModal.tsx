@@ -47,12 +47,12 @@ const PreviewTile: React.FC<{
 }> = ({ imageUrl, isLoading, hasError, baseImage }) => {
   if (isLoading) {
     return (
-      <div className="w-full h-full bg-slate-700 animate-pulse" />
+      <div className="w-full h-full bg-[--color-surface-2] animate-pulse" />
     );
   }
   if (hasError) {
     return (
-      <div className="w-full h-full bg-slate-700 flex flex-col items-center justify-center text-center text-red-400 p-2">
+      <div className="w-full h-full bg-[--color-surface-2] flex flex-col items-center justify-center text-center text-[--color-danger] p-2">
         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
@@ -75,7 +75,6 @@ const FiltersModal: React.FC<FiltersModalProps> = ({ image, onClose, onApply }) 
   );
 
   useEffect(() => {
-    // Use a flag to prevent updates if the component unmounts
     let isCancelled = false;
     
     const generatePreviewsSequentially = async () => {
@@ -88,7 +87,6 @@ const FiltersModal: React.FC<FiltersModalProps> = ({ image, onClose, onApply }) 
         if (isCancelled) break;
         
         try {
-          // Add instruction for a low-res preview to speed up generation
           const previewPrompt = `${filter.prompt} IMPORTANT: Generate this as a low-resolution, small thumbnail-sized preview. Speed is more important than quality.`;
           const result = await editImageWithNanoBanana([imageInput], previewPrompt);
 
@@ -119,15 +117,14 @@ const FiltersModal: React.FC<FiltersModalProps> = ({ image, onClose, onApply }) 
     return () => {
         isCancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [image.url, image.base64, image.mimeType]);
 
   return (
-    <div className="fixed inset-0 bg-slate-900/80 flex flex-col justify-center items-center z-50 backdrop-blur-lg animate-fade-in p-4" onClick={onClose}>
-      <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-2xl w-full max-w-4xl h-full max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
-        <header className="flex-shrink-0 flex items-center justify-between p-4 border-b border-slate-700">
-            <h2 className="text-2xl font-bold text-slate-100 flex items-center gap-3">🖌️ Apply a Filter</h2>
-            <button onClick={onClose} className="text-slate-400 text-3xl hover:text-white transition-all duration-200" aria-label="Close">&times;</button>
+    <div className="fixed inset-0 bg-[--color-bg]/80 flex flex-col justify-center items-center z-50 backdrop-blur-lg animate-fade-in p-4" onClick={onClose}>
+      <div className="bg-[--color-surface-1] border border-[--color-border] rounded-lg shadow-2xl w-full max-w-4xl h-full max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <header className="flex-shrink-0 flex items-center justify-between p-4 border-b border-[--color-border]">
+            <h2 className="text-2xl font-bold text-[--color-text-primary] flex items-center gap-3">🖌️ Apply a Filter</h2>
+            <button onClick={onClose} className="text-[--color-text-tertiary] text-3xl hover:text-[--color-text-primary] transition-all duration-200" aria-label="Close">&times;</button>
         </header>
         <div className="flex-grow p-6 overflow-y-auto">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -144,9 +141,9 @@ const FiltersModal: React.FC<FiltersModalProps> = ({ image, onClose, onApply }) 
                             disabled={!canApply}
                             aria-label={`Apply ${filter.name} filter`}
                         >
-                            <div className={`aspect-square bg-slate-900 rounded-lg overflow-hidden border-2 transition-all duration-200
-                                ${canApply ? 'group-hover:border-teal-500 group-hover:scale-105 transform border-slate-700' : 'border-slate-700'}
-                                ${previewState.error ? 'border-red-500/50' : ''}
+                            <div className={`aspect-square bg-[--color-surface-inset] rounded-lg overflow-hidden border-2 transition-all duration-200
+                                ${canApply ? 'group-hover:border-[--color-primary] group-hover:scale-105 transform border-[--color-border]' : 'border-[--color-border]'}
+                                ${previewState.error ? 'border-[--color-error-border]/50' : ''}
                             `}>
                                 <PreviewTile
                                   imageUrl={previewState.url}
@@ -155,7 +152,7 @@ const FiltersModal: React.FC<FiltersModalProps> = ({ image, onClose, onApply }) 
                                   baseImage={image.url}
                                 />
                             </div>
-                            <p className={`text-center font-semibold transition-colors ${canApply ? 'text-slate-300 group-hover:text-teal-400' : 'text-slate-500'}`}>
+                            <p className={`text-center font-semibold transition-colors ${canApply ? 'text-[--color-text-secondary] group-hover:text-[--color-primary]' : 'text-[--color-text-placeholder]'}`}>
                                 {filter.name}
                             </p>
                         </button>
@@ -163,8 +160,8 @@ const FiltersModal: React.FC<FiltersModalProps> = ({ image, onClose, onApply }) 
                 })}
             </div>
         </div>
-         <footer className="flex-shrink-0 flex justify-end items-center gap-4 p-4 border-t border-slate-700 bg-slate-800/50">
-            <button onClick={onClose} className="py-2 px-5 bg-slate-600 hover:bg-slate-500 text-white font-bold rounded-lg">Cancel</button>
+         <footer className="flex-shrink-0 flex justify-end items-center gap-4 p-4 border-t border-[--color-border] bg-[--color-surface-1]/50">
+            <button onClick={onClose} className="py-2 px-5 bg-[--color-surface-3] hover:bg-[--color-text-placeholder] text-[--color-text-primary] font-bold rounded-lg">Cancel</button>
         </footer>
       </div>
     </div>

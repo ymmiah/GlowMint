@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="slate">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -8,9 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       body {
-        background-color: #0f172a; /* slate-900 */
+        background-color: var(--color-bg);
         background-image: radial-gradient(circle at 1px 1px, rgba(45, 212, 191, 0.1) 1px, transparent 0);
         background-size: 2rem 2rem;
+        color: var(--color-text-primary);
       }
       @keyframes fadeIn {
         from { opacity: 0; transform: scale(0.95); }
@@ -24,14 +25,14 @@
         width: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: #1e293b; /* slate-800 */
+        background: var(--color-surface-1);
       }
       ::-webkit-scrollbar-thumb {
-        background: #475569; /* slate-600 */
+        background: var(--color-surface-3);
         border-radius: 4px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #64748b; /* slate-500 */
+        background: var(--color-text-placeholder);
       }
     </style>
   <script type="importmap">

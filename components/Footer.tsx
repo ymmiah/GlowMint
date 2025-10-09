@@ -10,13 +10,13 @@ const Footer: React.FC<FooterProps> = ({ onOpenTutorial }) => {
   const dateString = 'October 3, 2025';
 
   return (
-    <footer className="w-full bg-slate-900/50 border-t border-slate-700/50 text-center p-4 mt-8 flex-shrink-0">
-      <div className="container mx-auto text-sm text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-2">
+    <footer className="w-full bg-[--color-surface-1]/50 border-t border-[--color-border]/50 text-center p-4 mt-8 flex-shrink-0">
+      <div className="container mx-auto text-sm text-[--color-text-tertiary] flex flex-col sm:flex-row justify-between items-center gap-2">
         <span>© {year} GlowMint. All Rights Reserved.</span>
         <div className="flex items-center gap-4">
             <button
                 onClick={onOpenTutorial}
-                className="hover:text-teal-400 transition-colors duration-200 underline"
+                className="hover:text-[--color-primary] transition-colors duration-200 underline"
             >
                 How to Use GlowMint
             </button>
@@ -25,7 +25,7 @@ const Footer: React.FC<FooterProps> = ({ onOpenTutorial }) => {
               href="https://github.com/ymmiah/GlowMint"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 hover:text-teal-400 transition-colors duration-200 underline"
+              className="flex items-center gap-1 hover:text-[--color-primary] transition-colors duration-200 underline"
               title="View the source code on GitHub"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">

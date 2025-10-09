@@ -25,7 +25,7 @@ const FullscreenModal: React.FC<FullscreenModalProps> = ({ imageUrl, onClose }) 
 
   return (
     <div
-      className="fixed inset-0 bg-slate-900/80 flex justify-center items-center z-50 backdrop-blur-lg animate-fade-in"
+      className="fixed inset-0 bg-[--color-bg]/80 flex justify-center items-center z-50 backdrop-blur-lg animate-fade-in"
       onClick={onClose}
       aria-modal="true"
       role="dialog"
@@ -35,7 +35,7 @@ const FullscreenModal: React.FC<FullscreenModalProps> = ({ imageUrl, onClose }) 
       </div>
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 text-white text-4xl hover:text-slate-300 transition-all duration-200 transform hover:scale-125 focus:outline-none focus:ring-2 focus:ring-slate-200 rounded-full"
+        className="absolute top-4 right-4 text-white text-4xl hover:text-[--color-text-secondary] transition-all duration-200 transform hover:scale-125 focus:outline-none focus:ring-2 focus:ring-white rounded-full"
         aria-label="Close fullscreen view"
       >
         &times;

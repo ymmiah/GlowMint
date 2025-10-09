@@ -1,6 +1,6 @@
 # ✨ GlowMint - AI Photo Editor
 
-![GlowMint Banner](https://img.shields.io/badge/GlowMint-AI%20Photo%20Editor-14b8a6?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJoLTcgdy03IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjEuNSI+PHBhdGggc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNOS44MTMgMTUuOTA0TDkgMTguNzVsLS44MTMtMi44NDZhNC41IDQuNSAwIDAwLTMuMDktMy4wOUwyLjI1IDEybDIuODQ2LS44MTNhNC41IDQuNSAwIDAwMy4wOS0zLjA5TDkgNS4yNWwuODEzIDIuODQ2YTQuNSA0LjUgMCAwMDMuMDkgMy4wOUwxNS43NSAxMmwtMi44NDYuODEzYTQuNSA0LjUgMCAwMC0zLjA5IDMuMDl6TTE4LjI1OSA4LjcxNUwxOCAzLjc1bC0uMjU5LTEuMDM1YTMuMzc1IDMuMzc1IDAgMDAtMi40NTUtMi40NTZMMTQuMjUgNmwxLjAzNi0uMjU5YTMuMzc1IDMuMzc1IDAgMDAyLjQ1NS0yLjQ1NkwxOCAyLjI1bC4yNTkgMS4wMzVhMy4zNzUgMy4zNzUgMCAwMDIuNDU2IDIuNDU2TDIxLjc1IDZsLTEuMDM1LjI1OWEzLjMzc1IDMuMzc1IDAgMDAtMi40NTYgMi40NTZek0xNi44OTggMjAuNTI4TDE2LjI1IDIyLjVsLS42NDgtMS45NzJhNC41IDQuNSAwIDAxLTMuMDktMy4wOWwtMS45NzItLjY0OCAxLjk3Mi0uNjQ4YTQuNSA0LjUgMCAwMTMuMDktMy4wOWwuNjQ4LTEuOTcyLjY0OCAxLjk3MmE0LjUgNC41IDAgMDEzLjA5IDMuMDlsMS49NzIuNjQ4LTEuOTcyLjY4YTQuNSA0LjUgMCAwMS0zLjA5IDMuMDl6IiAvPjwvc3ZnPg==)
+![GlowMint Banner](https://img.shields.io/badge/GlowMint-AI%20Photo%20Editor-14b8a6?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJoLTcgdy03IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjEuNSI+PHBhdGggc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNOS44MTMgMTUuOTA0TDkgMTguNzVsLS44MTMtMi44NDZhNC41IDQuNSAwIDAwLTMuMDktMy4wOUwyLjI1IDEybDIuODQ2LS44MTNhNC41IDQuNSAwIDAwMy4wOS0zLjA5TDkgNS4yNWwuODEzIDIuODQ2YTQuNSA0LjUgMCAwMDMuMDkgMy4wOUwxNS43NSAxMmwtMi44NDYuODEzYTQuNSA0LjUgMCAwMC0zLjA5IDMuMDl6TTE4LjI1OSA4LjcxNUwxOCAzLjc1bC0uMjU5LTEuMDM1YTMuMzc1IDMuMzc1IDAgMDAtMi40NTUtMi40NTZMMTQuMjUgNmwxLjAzNi0uMjU5YTMuMzc1IDMuMzc1IDAgMDAyLjQ1NS0yLjQ1NkwxOCAyLjI1bC4yNTkgMS4wMzVhMy4zNzUgMy4zNzUgMCAwMDIuNDU2IDIuNDU2TDIxLjc1IDZsLTEuMDM1LjI1OWEzLjMzc1IDMuMzc1IDAgMDAtMi40NTYgMi40NTZek0xNi44OTggMjAuNTI4TDE2LjI1IDIyLjVsLS42NDgtMS45NzJhNC41IDQuNSAwIDAxLTMuMDktMy4wOWwtMS45NzItLjY0OCAxLjk3Mi0uNjQ4YTQuNSA0LjUgMCAwMTMuMDktMy4wOWwuNjQ4LTEuOTcyLjY0OCAxLjk3MmE0LjUgNC41IDAgMDEzLjA5IDMuMDlsMS45NzIuNjQ4LTEuOTcyLjY4YTQuNSA0LjUgMCAwMS0zLjA5IDMuMDl6IiAvPjwvc3ZnPg==)
 [![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg?style=flat-square)](LICENSE.md)
 [![React Version](https://img.shields.io/badge/React-^19.1.1-blue.svg?style=flat-square&logo=react)](https://react.dev/)
 [![Gemini API](https://img.shields.io/badge/Google-Gemini%20API-4285F4.svg?style=flat-square&logo=google)](https://ai.google.dev/)
@@ -24,12 +24,17 @@
 - **Advanced Controls**: Fine-tune your results with negative prompts to exclude unwanted elements and select from multiple output resolutions (Low, Medium, High).
 - **Iterative Workflow**: Use any generated image as the new input for further edits, allowing you to layer effects and refine your creation.
 - **Full History**: Never lose your progress with unlimited undo/redo capabilities in single edit mode.
+- **Customizable UI Themes**: Choose from multiple color palettes (including light and dark modes) to personalize your editing experience.
 
 ## 🛠️ Technology Stack
 
 - **Frontend**: [React](https://react.dev/) 19, [TypeScript](https://www.typescriptlang.org/), [Tailwind CSS](https://tailwindcss.com/)
 - **AI Model**: Google Gemini `gemini-2.5-flash-image-preview`
 - **Gemini SDK**: [`@google/genai`](https://www.npmjs.com/package/@google/genai)
+- **Theming**: Centralized, dynamic theme management system located in the `/theme` directory.
+
+### Centralized Theming System
+GlowMint features a robust and easily extensible theming system. All theme-related files, including variable definitions (`theme.ts`), the React context (`ThemeContext.tsx`), and the dynamic style injector (`ThemeStyleSheet.tsx`), are located in the `/theme` directory. To add a new theme, simply define its color variables in `theme.ts`, and the UI will update automatically.
 
 ## 📖 How to Use
 
@@ -74,6 +79,12 @@ You have two powerful options for editing your photos:
 ## 📜 Changelog
 
 All notable changes to this project will be documented in this section.
+
+### [1.3.0] - 2025-10-09
+
+#### 🏗️ Architecture & Refactoring
+- **Centralized Theming System**: Refactored the entire UI theming system into a dedicated `/theme` directory. All theme variables and logic are now centralized in TypeScript, removing hardcoded styles from `index.html`. This makes adding or modifying themes significantly easier and more maintainable.
+- **Dynamic Style Injection**: The application now dynamically generates and injects the theme stylesheet, ensuring a clean separation of concerns.
 
 ### [1.2.1] - 2025-10-03
 

@@ -20,7 +20,7 @@ const PromptInput: React.FC<PromptInputProps> = ({ prompt, setPrompt, isDisabled
       disabled={isDisabled}
       placeholder={placeholder || defaultPlaceholder}
       rows={rows}
-      className="w-full p-4 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full p-4 bg-[--color-surface-inset] border border-[--color-border] rounded-lg text-[--color-text-primary] placeholder-[--color-text-placeholder] focus:outline-none focus:ring-2 focus:ring-[--color-primary-focus] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
       title="Describe the changes you want to make to the image"
     />
   );

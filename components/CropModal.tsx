@@ -15,7 +15,7 @@ const aspectRatios = [
     { name: 'Landscape 16:9', value: 16/9 },
 ];
 
-const CropModal: React.FC<CropModalProps> = ({ image, onClose, onApply, onApplyAI }) => {
+export const CropModal: React.FC<CropModalProps> = ({ image, onClose, onApply, onApplyAI }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(new Image());
@@ -231,37 +231,36 @@ const CropModal: React.FC<CropModalProps> = ({ image, onClose, onApply, onApplyA
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/80 flex flex-col justify-center items-center z-50 backdrop-blur-lg animate-fade-in p-4" onClick={onClose}>
-      <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-2xl w-full max-w-4xl h-full max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
-        <header className="flex-shrink-0 flex items-center justify-between p-4 border-b border-slate-700">
-            <h2 className="text-2xl font-bold text-slate-100 flex items-center gap-3">📏 Crop & Rotate</h2>
-            <button onClick={onClose} className="text-slate-400 text-3xl hover:text-white transition-all" aria-label="Close">&times;</button>
+    <div className="fixed inset-0 bg-[--color-bg]/80 flex flex-col justify-center items-center z-50 backdrop-blur-lg animate-fade-in p-4" onClick={onClose}>
+      <div className="bg-[--color-surface-1] border border-[--color-border] rounded-lg shadow-2xl w-full max-w-4xl h-full max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <header className="flex-shrink-0 flex items-center justify-between p-4 border-b border-[--color-border]">
+            <h2 className="text-2xl font-bold text-[--color-text-primary] flex items-center gap-3">📏 Crop & Rotate</h2>
+            <button onClick={onClose} className="text-[--color-text-tertiary] text-3xl hover:text-[--color-text-primary] transition-all" aria-label="Close">&times;</button>
         </header>
         <div className="flex-grow p-4 min-h-0">
-             <div ref={containerRef} className="w-full h-full bg-slate-900" onMouseDown={handlePointerDown} onTouchStart={handlePointerDown}>
-                <canvas ref={canvasRef} className="w-full h-full" />
+             <div ref={containerRef} className="w-full h-full bg-[--color-surface-inset]">
+                <canvas ref={canvasRef} className="w-full h-full" onMouseDown={handlePointerDown} onTouchStart={handlePointerDown} />
              </div>
         </div>
-        <footer className="flex-shrink-0 flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-slate-700 bg-slate-800/50">
+        <footer className="flex-shrink-0 flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[--color-border] bg-[--color-surface-1]/50">
             <div className='flex items-center gap-4'>
                 <div className="flex items-center gap-3">
                     {aspectRatios.map(ar => (
-                        <button key={ar.name} onClick={() => setActiveAspectRatio(ar)} className={`px-3 py-2 text-sm rounded-md border-2 ${activeAspectRatio.name === ar.name ? 'bg-teal-600 border-teal-500' : 'bg-slate-700 border-slate-600'}`}>{ar.name}</button>
+                        <button key={ar.name} onClick={() => setActiveAspectRatio(ar)} className={`px-3 py-2 text-sm rounded-md border-2 ${activeAspectRatio.name === ar.name ? 'bg-[--color-primary] border-[--color-primary-hover] text-[--color-primary-text]' : 'bg-[--color-surface-2] border-[--color-border] text-[--color-text-secondary]'}`}>{ar.name}</button>
                     ))}
                 </div>
                 <div className="flex items-center gap-2">
                     <input type="range" min="-45" max="45" value={rotation} onChange={(e) => setRotation(Number(e.target.value))} className="w-24"/>
-                    <span className="text-sm font-mono bg-slate-700 px-2 py-1 rounded">{rotation}°</span>
+                    <span className="text-sm font-mono bg-[--color-surface-2] px-2 py-1 rounded">{rotation}°</span>
                 </div>
             </div>
             <div className="flex items-center gap-4">
-                <button onClick={handleStraighten} className="py-2 px-5 bg-slate-600 hover:bg-slate-500 font-bold rounded-lg">Auto-Straighten ✨</button>
-                <button onClick={handleApply} className="py-2 px-5 bg-teal-600 hover:bg-teal-500 font-bold rounded-lg">Apply</button>
+                <button onClick={handleStraighten} className="py-2 px-5 bg-[--color-surface-3] hover:bg-[--color-text-placeholder] font-bold rounded-lg">Auto-Straighten ✨</button>
+                {/* FIX: Complete the unfinished button element and add the closing tags for the component. */}
+                <button onClick={handleApply} className="py-2 px-5 bg-[--color-primary] hover:bg-[--color-primary-hover] text-[--color-primary-text] font-bold rounded-lg">Apply Crop</button>
             </div>
         </footer>
       </div>
     </div>
   );
 };
-
-export default CropModal;

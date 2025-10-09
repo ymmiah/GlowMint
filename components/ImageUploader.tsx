@@ -22,7 +22,7 @@ const CircularProgressBar = ({ progress }: { progress: number }) => {
         <div className="relative w-12 h-12">
             <svg className="w-full h-full" viewBox="0 0 50 50">
                 <circle
-                    className="text-slate-700"
+                    className="text-[--color-surface-2]"
                     strokeWidth="5"
                     stroke="currentColor"
                     fill="transparent"
@@ -31,7 +31,7 @@ const CircularProgressBar = ({ progress }: { progress: number }) => {
                     cy="25"
                 />
                 <circle
-                    className="text-teal-500"
+                    className="text-[--color-primary]"
                     strokeWidth="5"
                     strokeDasharray={circumference}
                     strokeDashoffset={offset}
@@ -44,7 +44,7 @@ const CircularProgressBar = ({ progress }: { progress: number }) => {
                     style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%', transition: 'stroke-dashoffset 0.2s ease-out' }}
                 />
             </svg>
-            <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-slate-300">
+            <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-[--color-text-secondary]">
                 {progress}%
             </span>
         </div>
@@ -148,7 +148,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onAddImages, onRe
       <label
         htmlFor="image-upload-input"
         className={`w-full h-48 border-2 border-dashed rounded-lg flex flex-col justify-center items-center cursor-pointer transition-colors duration-300
-          ${isDragging ? 'border-teal-500 bg-slate-700/50' : 'border-slate-600 hover:border-teal-500 hover:bg-slate-700/50'}
+          ${isDragging ? 'border-[--color-primary] bg-[--color-surface-2]/50' : 'border-[--color-surface-3] hover:border-[--color-primary] hover:bg-[--color-surface-2]/50'}
         `}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -156,7 +156,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onAddImages, onRe
         title="Click to select photos or drag and drop them here"
       >
         {images.length === 0 && uploadStatuses.length === 0 ? (
-          <div className="text-center text-slate-400">
+          <div className="text-center text-[--color-text-tertiary]">
             <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
             <p className="mt-2 text-sm font-semibold">Click to upload or drag & drop</p>
             <p className="text-xs">Upload one or more images (PNG, JPG, WEBP)</p>
@@ -187,13 +187,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onAddImages, onRe
               </div>
             ))}
             {uploadStatuses.map(status => (
-                <div key={status.id} className="aspect-square bg-slate-800 rounded-md animate-fade-in flex flex-col items-center justify-center p-1">
+                <div key={status.id} className="aspect-square bg-[--color-surface-1] rounded-md animate-fade-in flex flex-col items-center justify-center p-1">
                   <CircularProgressBar progress={status.progress} />
-                  <p className="text-xs text-slate-400 mt-2 text-center break-all truncate w-full px-1" title={status.name}>{status.name}</p>
+                  <p className="text-xs text-[--color-text-tertiary] mt-2 text-center break-all truncate w-full px-1" title={status.name}>{status.name}</p>
                 </div>
             ))}
              <div className="flex items-center justify-center aspect-square">
-                 <div className="w-full h-full border-2 border-dashed border-slate-600 hover:border-teal-500 rounded-md flex items-center justify-center text-slate-500 hover:text-teal-400 transition-colors">
+                 <div className="w-full h-full border-2 border-dashed border-[--color-surface-3] hover:border-[--color-primary] rounded-md flex items-center justify-center text-[--color-text-placeholder] hover:text-[--color-primary] transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
