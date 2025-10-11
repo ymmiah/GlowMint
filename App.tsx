@@ -1,5 +1,3 @@
-
-
 import React, { useState, useCallback, useMemo } from 'react';
 import Header from './components/Header';
 import ImageUploader from './components/ImageUploader';
@@ -649,23 +647,58 @@ const App: React.FC = () => {
   
   const handleDownload = useCallback(() => {
     if (!currentItem.edited) return;
-    
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    const filename = `glowmint_${year}${month}${day}_${hours}${minutes}${seconds}.png`;
 
-    const link = document.createElement('a');
-    link.href = currentItem.edited;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+        // Helper function to convert data URL to Blob
+        const dataURLtoBlob = (dataurl: string): Blob => {
+            const arr = dataurl.split(',');
+            if (arr.length < 2) {
+                throw new Error('Invalid data URL');
+            }
+            const mimeMatch = arr[0].match(/:(.*?);/);
+            if (!mimeMatch) {
+                throw new Error('Could not parse MIME type from data URL');
+            }
+            const mime = mimeMatch[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], { type: mime });
+        }
+
+        const blob = dataURLtoBlob(currentItem.edited);
+        const url = window.URL.createObjectURL(blob);
+
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const filename = `glowmint_${year}${month}${day}_${hours}${minutes}${seconds}.png`;
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        
+        // Clean up the object URL and the link
+        setTimeout(() => {
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(link);
+        }, 100);
+
+    } catch (error) {
+        console.error("Download failed:", error);
+        setError({ code: 'GENERIC_ERROR', message: 'Could not download the image. Please try again.' });
+    }
   }, [currentItem.edited]);
+
 
   const handleUseAsInput = useCallback(() => {
     if (!currentItem.edited) return;
