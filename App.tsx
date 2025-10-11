@@ -645,7 +645,7 @@ const App: React.FC = () => {
     setCurrentResultIndex(0);
   }, []);
   
-  const handleDownload = useCallback(() => {
+  const handleDownload = useCallback(async () => {
     if (!currentItem.edited) return;
 
     try {
@@ -668,10 +668,7 @@ const App: React.FC = () => {
             }
             return new Blob([u8arr], { type: mime });
         }
-
-        const blob = dataURLtoBlob(currentItem.edited);
-        const url = window.URL.createObjectURL(blob);
-
+        
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -681,13 +678,20 @@ const App: React.FC = () => {
         const seconds = String(now.getSeconds()).padStart(2, '0');
         const filename = `glowmint_${year}${month}${day}_${hours}${minutes}${seconds}.png`;
 
+        const blob = dataURLtoBlob(currentItem.edited);
+        
+        // This method creates a link with a download attribute, which is the most
+        // universal way to trigger a file download. It works reliably on desktops
+        // and is the best approach for a direct "save" action on mobile, despite
+        // some mobile browser inconsistencies.
+        const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
         link.download = filename;
         document.body.appendChild(link);
         link.click();
         
-        // Clean up the object URL and the link
+        // Clean up the object URL and the link.
         setTimeout(() => {
             window.URL.revokeObjectURL(url);
             document.body.removeChild(link);
