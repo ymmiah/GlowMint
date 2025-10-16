@@ -122,6 +122,7 @@ const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                     For precise control, GlowMint offers interactive tools. Access them via the <strong className="text-[--color-primary]">Quick Actions</strong> panel when in <strong className="text-[--color-primary]">Single Edit mode</strong>.
                     </p>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <ToolExample emoji="✍️" name="Line Art" description="Convert a photo into clean, black & white outlines, perfect for a minimalist style." />
                         <ToolExample emoji="🪄" name="Magic Erase" description="Paint over and remove unwanted objects, people, or text." />
                         <ToolExample emoji="🔁" name="Magic Replace" description="Select an area and tell the AI what to replace it with." />
                         <ToolExample emoji="🎭" name="Style Remix" description="Apply the complete artistic style of one image to another." />

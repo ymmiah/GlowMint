@@ -67,6 +67,7 @@ From simple one-click enhancements to complex, multi-image compositions and inte
     -   **Magic Erase**: Seamlessly paint over and remove unwanted objects.
     -   **Magic Replace**: Select an area and replace it with anything you can imagine.
     -   **Style Remix**: Transfer the complete artistic style of one image onto another.
+    -   **Line Art**: Convert photos into high-quality, clean black & white line drawings.
     -   **AI Backgrounds, Filters, Cropping & more!**
 -   **🖼️ Powerful Batch Processing**: Apply the same edit to multiple images at once, with a progress bar and an easy-to-navigate results carousel.
 -   **↔️ Versatile Comparison Tools**: A unified display with **Toggle**, **Slider**, and **Side-by-Side** views for clear before-and-after comparison.
@@ -187,6 +188,10 @@ All notable changes to this project will be documented in this section.
 - **Smart Caching & Edit Versioning**: Implemented a robust client-side caching system using IndexedDB. This acts as a version control for your edits, instantly loading previously generated results for different resolutions of the same prompt.
 - **"Advanced Thinking" Pre-fetching**: The app now intelligently pre-fetches other resolutions in the background after an edit is completed, making switching between versions feel instantaneous.
 - **UI Feedback**: The resolution selector now visually indicates (✨) which resolutions are cached and available instantly.
+
+#### ✨ Feature Update: Line Art
+- **New Power Tool**: Added a highly-advanced "Line Art" featured action, which uses a multi-stage prompt to convert photos into clean, professional-quality line drawings.
+- **Feature Replacement**: Removed the "16-Bit Art" feature due to inconsistent and unreliable results across various scenarios. The new "Line Art" tool provides a far superior and more dependable creative option.
 
 ### [1.4.1] - 2025-10-11
 
