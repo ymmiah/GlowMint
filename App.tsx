@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import Header from './components/Header';
 import ImageUploader from './components/ImageUploader';
 import PromptInput from './components/PromptInput';
@@ -11,6 +11,7 @@ import MagicEraseModal from './components/MagicEraseModal';
 import Footer from './components/Footer';
 import TutorialModal from './components/TutorialModal';
 import { editImageWithNanoBanana } from './services/geminiService';
+import { cacheService, createCacheKey } from './services/cacheService';
 import type { ImageFile } from './types';
 import MagicReplaceModal from './components/MagicReplaceModal';
 import AIBackgroundModal from './components/AIBackgroundModal';
@@ -169,13 +170,14 @@ Before outputting, review your work against this checklist:
 const MAX_CONCURRENT_REQUESTS = 3;
 
 type ViewMode = 'toggle' | 'slider' | 'side-by-side';
+type Resolution = 'Low' | 'Medium' | 'High';
 
 const App: React.FC = () => {
   const [originalImages, setOriginalImages] = useState<ImageFile[]>([]);
   const [prompt, setPrompt] = useState<string>('');
   const [negativePrompt, setNegativePrompt] = useState<string>('');
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
-  const [resolution, setResolution] = useState<'Low' | 'Medium' | 'High'>('Medium');
+  const [resolution, setResolution] = useState<Resolution>('Medium');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<AppError | null>(null);
   const [apiResponseText, setApiResponseText] = useState<string | null>(null);
@@ -209,6 +211,9 @@ const App: React.FC = () => {
   // State for Tutorial modal
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   
+  // State for smart caching
+  const [cachedResolutions, setCachedResolutions] = useState<Set<Resolution>>(new Set());
+
   // Memoized value to get the current item being displayed in the result viewer
   const currentItem = useMemo(() => {
     if (editMode === 'single') {
@@ -261,18 +266,99 @@ const App: React.FC = () => {
     handleImageUpload(updatedImages);
   }, [originalImages, handleImageUpload]);
 
-  const getFinalPrompt = useCallback((customPrompt?: string) => {
+  const getFinalPrompt = useCallback((customPrompt?: string, forResolution?: Resolution) => {
     const resolutionInstructions = {
         Low: "Please generate the final image in low resolution (e.g. for a thumbnail or preview).",
         Medium: "Please generate the final image in a standard, medium resolution, balancing quality and file size.",
         High: "Please generate the final image in high resolution, aiming for maximum detail and quality.",
     };
-    let finalPrompt = `${customPrompt || prompt}. ${resolutionInstructions[resolution]}`;
+    let finalPrompt = `${customPrompt || prompt}. ${resolutionInstructions[forResolution || resolution]}`;
     if (negativePrompt.trim()) {
         finalPrompt += ` Negative Prompt: Do not include the following elements or concepts: ${negativePrompt}.`;
     }
     return finalPrompt;
   }, [prompt, negativePrompt, resolution]);
+
+  // Effect to check cache status for current settings
+  useEffect(() => {
+    if (originalImages.length === 0 || editMode === 'batch' || !prompt.trim()) {
+      setCachedResolutions(new Set());
+      return;
+    }
+
+    const checkCache = async () => {
+      const newCachedSet = new Set<Resolution>();
+      const resolutionsToCheck: Resolution[] = ['Low', 'Medium', 'High'];
+      
+      const imageInputs = originalImages.map(img => ({
+          base64ImageData: img.base64,
+          mimeType: img.mimeType,
+      }));
+      
+      for (const res of resolutionsToCheck) {
+        const finalPrompt = getFinalPrompt(prompt, res);
+        try {
+            const cacheKey = await createCacheKey(imageInputs, finalPrompt);
+            if (await cacheService.has(cacheKey)) {
+                newCachedSet.add(res);
+            }
+        } catch (e) {
+            console.error("Failed to check cache for resolution:", res, e);
+        }
+      }
+      setCachedResolutions(newCachedSet);
+    };
+
+    checkCache();
+  }, [originalImages, prompt, negativePrompt, getFinalPrompt, editMode]);
+
+  const prefetchOtherResolutions = useCallback(async (
+      imagesToEdit: ImageFile[], 
+      promptToUse: string,
+      completedResolution: Resolution,
+      mask?: { base64ImageData: string; mimeType: string; }
+    ) => {
+        // Only prefetch for single image edits in single mode for simplicity and cost-effectiveness.
+        if (imagesToEdit.length !== 1 || editMode !== 'single') return;
+
+        console.log(`Prefetching triggered after completing ${completedResolution} resolution.`);
+        
+        const resolutionsToPrefetch: Resolution[] = ['Low', 'Medium', 'High'];
+
+        const imageInputs = imagesToEdit.map(img => ({
+            base64ImageData: img.base64,
+            mimeType: img.mimeType,
+        }));
+        
+        for (const res of resolutionsToPrefetch) {
+            if (res === completedResolution) continue; // Skip the one we just did
+            
+            // Use a try-catch for each prefetch so one failure doesn't stop others.
+            try {
+                const finalPrompt = getFinalPrompt(promptToUse, res);
+                const cacheKey = await createCacheKey(imageInputs, finalPrompt, mask);
+                if (await cacheService.has(cacheKey)) {
+                    console.log(`Skipping prefetch for ${res} - already cached.`);
+                    continue;
+                }
+                
+                console.log(`Prefetching ${res} resolution...`);
+                // Fire and forget. No need to await, handle errors, or use the result.
+                // It just populates the cache.
+                editImageWithNanoBanana(imageInputs, finalPrompt, mask)
+                    .then(() => {
+                        console.log(`Prefetch for ${res} resolution completed and cached.`);
+                        // Update the UI to show the new cached state
+                        setCachedResolutions(prev => new Set(prev).add(res));
+                    })
+                    .catch(err => {
+                        console.error(`Prefetch for ${res} resolution failed:`, err);
+                    });
+            } catch(e) {
+                console.error(`Error during prefetch setup for ${res}:`, e);
+            }
+        }
+    }, [getFinalPrompt, editMode]);
   
   const handleEdit = useCallback(async (customPrompt?: string, imagesToEdit = originalImages) => {
     if (imagesToEdit.length === 0) {
@@ -300,13 +386,16 @@ const App: React.FC = () => {
         mimeType: img.mimeType,
       }));
       
-      const result = await editImageWithNanoBanana(imageInputs, getFinalPrompt(customPrompt));
+      const finalPrompt = getFinalPrompt(customPrompt);
+      const result = await editImageWithNanoBanana(imageInputs, finalPrompt);
         
       if (result.editedImage) {
         const newImage = `data:image/png;base64,${result.editedImage}`;
         const newHistory = history.slice(0, historyIndex + 1);
         setHistory([...newHistory, newImage]);
         setHistoryIndex(newHistory.length);
+        // After a successful edit, trigger prefetching
+        prefetchOtherResolutions(imagesToEdit, customPrompt || prompt, resolution);
       } else {
         setError({ code: 'GENERIC_ERROR', message: 'The AI did not return an edited image. Please try a different prompt.' });
       }
@@ -327,7 +416,7 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [originalImages, prompt, history, historyIndex, getFinalPrompt]);
+  }, [originalImages, prompt, history, historyIndex, getFinalPrompt, resolution, prefetchOtherResolutions]);
 
   const handleBatchEdit = useCallback(async (customPrompt?: string) => {
     if (originalImages.length === 0) {
@@ -449,6 +538,8 @@ const App: React.FC = () => {
         }
     }
     
+    setPrompt(selectedAction.prompt);
+
     if (editMode === 'single') {
         handleEdit(selectedAction.prompt);
     } else {
@@ -476,7 +567,7 @@ const App: React.FC = () => {
             mimeType: 'image/png',
         };
 
-        const finalPrompt = `You are a professional photo editor. Your task is to perform a content-aware fill (inpainting). I have provided an original image and a corresponding mask. The area to be removed and filled is marked in white on the mask image. Analyze the surrounding pixels and seamlessly fill the masked area with realistic, context-appropriate content. Do not alter the rest of the image. Output only the final, fully edited image.`;
+        const finalPrompt = getFinalPrompt(`You are a professional photo editor. Your task is to perform a content-aware fill (inpainting). I have provided an original image and a corresponding mask. The area to be removed and filled is marked in white on the mask image. Analyze the surrounding pixels and seamlessly fill the masked area with realistic, context-appropriate content. Do not alter the rest of the image. Output only the final, fully edited image.`);
 
         const result = await editImageWithNanoBanana([originalImageInput], finalPrompt, maskInput);
         
@@ -506,7 +597,7 @@ const App: React.FC = () => {
     } finally {
         setIsLoading(false);
     }
-  }, [eraseModalState, history, historyIndex]);
+  }, [eraseModalState, history, historyIndex, getFinalPrompt]);
 
   const handleApplyMagicReplace = useCallback(async (maskBase64: string, replacementPrompt: string) => {
     const { image } = magicReplaceModalState;
@@ -521,7 +612,7 @@ const App: React.FC = () => {
         const originalImageInput = { base64ImageData: image.base64, mimeType: image.mimeType };
         const maskInput = { base64ImageData: maskBase64, mimeType: 'image/png' };
         
-        const finalPrompt = `You are a professional photo editor. Your task is to perform a content-aware replacement. I have provided an original image and a corresponding mask. The area to be replaced is marked in white on the mask image. Analyze the surrounding pixels, lighting, and context, and seamlessly replace the masked area with the following content: "${replacementPrompt}". Do not alter the rest of the image. Output only the final, fully edited image.`;
+        const finalPrompt = getFinalPrompt(`You are a professional photo editor. Your task is to perform a content-aware replacement. I have provided an original image and a corresponding mask. The area to be replaced is marked in white on the mask image. Analyze the surrounding pixels, lighting, and context, and seamlessly replace the masked area with the following content: "${replacementPrompt}". Do not alter the rest of the image. Output only the final, fully edited image.`);
 
         const result = await editImageWithNanoBanana([originalImageInput], finalPrompt, maskInput);
         
@@ -542,7 +633,7 @@ const App: React.FC = () => {
     } finally {
         setIsLoading(false);
     }
-  }, [magicReplaceModalState, history, historyIndex]);
+  }, [magicReplaceModalState, history, historyIndex, getFinalPrompt]);
 
   const handleApplyAIBackground = useCallback(async (backgroundPrompt: string) => {
     setAIBackgroundModalState({ isOpen: false, image: null });
@@ -589,13 +680,15 @@ const App: React.FC = () => {
         if (remixPrompt.trim()) {
             styleRemixPrompt += `\n\nIMPORTANT USER REFINEMENT: The user has provided specific instructions. Pay close attention to this: "${remixPrompt}". Prioritize this instruction when transferring the style.`;
         }
+        
+        const finalPrompt = getFinalPrompt(styleRemixPrompt);
 
         const imageInputs = [
             { base64ImageData: contentImage.base64, mimeType: contentImage.mimeType },
             { base64ImageData: styleImage.base64, mimeType: styleImage.mimeType },
         ];
         
-        const result = await editImageWithNanoBanana(imageInputs, styleRemixPrompt);
+        const result = await editImageWithNanoBanana(imageInputs, finalPrompt);
         
         if (result.editedImage) {
             const newImage = `data:image/png;base64,${result.editedImage}`;
@@ -621,7 +714,7 @@ const App: React.FC = () => {
     } finally {
         setIsLoading(false);
     }
-  }, [styleRemixModalState, history, historyIndex]);
+  }, [styleRemixModalState, history, historyIndex, getFinalPrompt]);
 
   const handleExamplePrompt = useCallback(() => {
     const randomPrompt = examplePrompts[Math.floor(Math.random() * examplePrompts.length)];
@@ -867,6 +960,7 @@ const App: React.FC = () => {
                   selectedResolution={resolution}
                   onResolutionChange={setResolution}
                   isDisabled={originalImages.length === 0 || isLoading || isBatchProcessing}
+                  cachedResolutions={cachedResolutions}
                 />
                 
                 <div className="mt-6">

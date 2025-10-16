@@ -70,6 +70,7 @@ From simple one-click enhancements to complex, multi-image compositions and inte
     -   **AI Backgrounds, Filters, Cropping & more!**
 -   **🖼️ Powerful Batch Processing**: Apply the same edit to multiple images at once, with a progress bar and an easy-to-navigate results carousel.
 -   **↔️ Versatile Comparison Tools**: A unified display with **Toggle**, **Slider**, and **Side-by-Side** views for clear before-and-after comparison.
+-   **🧠 Smart Caching & Pre-fetching**: An intelligent caching layer that instantly loads previous edits and pre-fetches higher resolutions in the background for a lightning-fast experience.
 -   **🔄 Iterative Workflow**: Use any edited image as the new input for further edits, allowing you to layer effects and refine your creations.
 -   **🎨 Customizable UI Themes**: Personalize your editing environment with multiple color palettes (including light and dark modes).
 -   **💾 Full History Control**: Never lose your progress in single-edit mode with unlimited undo/redo.
@@ -85,6 +86,7 @@ This project is built on a modern, robust, and scalable frontend stack.
 *   **[TypeScript](https://www.typescriptlang.org/)**: For static typing, improved developer experience, and more maintainable code.
 *   **[Tailwind CSS](https://tailwindcss.com/)**: A utility-first CSS framework for rapid and consistent styling.
 *   **[@google/genai](https://www.npmjs.com/package/@google/genai)**: The official Google SDK for interacting with the Gemini API.
+*   **[IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API)**: For robust client-side caching of generated images.
 *   **Centralized Theming System**: A custom, dynamic theming engine located in the `/theme` directory for easy customization.
 
 ---
@@ -178,6 +180,13 @@ Distributed under the MIT License. See `LICENSE.md` for more information.
 ## 📜 Changelog
 
 All notable changes to this project will be documented in this section.
+
+### [1.5.0] - 2025-10-16
+
+#### ✨ New Features & Performance
+- **Smart Caching & Edit Versioning**: Implemented a robust client-side caching system using IndexedDB. This acts as a version control for your edits, instantly loading previously generated results for different resolutions of the same prompt.
+- **"Advanced Thinking" Pre-fetching**: The app now intelligently pre-fetches other resolutions in the background after an edit is completed, making switching between versions feel instantaneous.
+- **UI Feedback**: The resolution selector now visually indicates (✨) which resolutions are cached and available instantly.
 
 ### [1.4.1] - 2025-10-11
 

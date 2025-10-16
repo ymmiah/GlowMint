@@ -1,5 +1,6 @@
 import { GoogleGenAI, Modality, Type } from "@google/genai";
 import type { GenerateContentResponse } from "@google/genai";
+import { createCacheKey, cacheService } from './cacheService';
 
 if (!process.env.API_KEY || process.env.API_KEY.trim() === '') {
   throw new Error("API_KEY environment variable is not set or is empty. This is required for the application to function.");
@@ -7,12 +8,12 @@ if (!process.env.API_KEY || process.env.API_KEY.trim() === '') {
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-interface EditResult {
+export interface EditResult {
   editedImage: string | null;
   text: string | null;
 }
 
-interface ImageInput {
+export interface ImageInput {
   base64ImageData: string;
   mimeType: string;
 }
@@ -55,6 +56,22 @@ export const editImageWithNanoBanana = async (
   prompt: string,
   mask?: ImageInput
 ): Promise<EditResult> => {
+  const cacheKey = await createCacheKey(images, prompt, mask);
+  
+  try {
+    const cachedResult = await cacheService.get<EditResult>(cacheKey);
+    if (cachedResult) {
+      console.log("Returning result from cache.");
+      // Add a slight delay for better UX, so it doesn't feel "broken" by being too fast.
+      await new Promise(resolve => setTimeout(resolve, 150));
+      return cachedResult;
+    }
+  } catch (e) {
+      console.error("Cache read failed, proceeding with API call.", e);
+  }
+
+  console.log("Cache miss, calling Gemini API.");
+
   try {
     const imageParts = images.map(image => ({
       inlineData: {
@@ -104,8 +121,19 @@ export const editImageWithNanoBanana = async (
         }
         console.warn("API response did not contain an image part and was not blocked. Response:", response);
     }
+    
+    const result: EditResult = { editedImage, text };
 
-    return { editedImage, text };
+    if (result.editedImage) {
+        try {
+            await cacheService.set(cacheKey, result);
+            console.log("Result saved to cache.");
+        } catch(e) {
+            console.error("Cache write failed.", e);
+        }
+    }
+
+    return result;
     
   } catch (error) {
     console.error("Error calling Gemini API:", error);

@@ -6,6 +6,7 @@ interface ResolutionSelectorProps {
   selectedResolution: Resolution;
   onResolutionChange: (resolution: Resolution) => void;
   isDisabled: boolean;
+  cachedResolutions: Set<Resolution>;
 }
 
 const resolutions: { id: Resolution; label: string; description: string }[] = [
@@ -14,28 +15,36 @@ const resolutions: { id: Resolution; label: string; description: string }[] = [
   { id: 'High', label: 'High', description: 'Best quality, larger file size' },
 ];
 
-const ResolutionSelector: React.FC<ResolutionSelectorProps> = ({ selectedResolution, onResolutionChange, isDisabled }) => {
+const ResolutionSelector: React.FC<ResolutionSelectorProps> = ({ selectedResolution, onResolutionChange, isDisabled, cachedResolutions }) => {
   return (
     <div className="mt-4 mb-2">
       <h3 className="font-semibold text-[--color-text-secondary] mb-3">Output Resolution</h3>
       <div className="grid grid-cols-3 gap-3">
-        {resolutions.map(({ id, label, description }) => (
-          <button
-            key={id}
-            onClick={() => onResolutionChange(id)}
-            disabled={isDisabled}
-            className={`p-3 text-center rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[--color-primary-focus] focus:ring-opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5
-              ${selectedResolution === id
-                ? 'bg-[--color-primary] border-[--color-primary-hover] text-[--color-primary-text] shadow-lg hover:bg-[--color-primary-hover]'
-                : 'bg-[--color-surface-2] border-[--color-border] hover:bg-[--color-surface-3] hover:border-[--color-surface-3] text-[--color-text-secondary]'
-              }
-            `}
-            aria-pressed={selectedResolution === id}
-            title={description}
-          >
-            <span className="font-bold text-sm">{label}</span>
-          </button>
-        ))}
+        {resolutions.map(({ id, label, description }) => {
+          const isCached = cachedResolutions.has(id);
+          const fullDescription = isCached ? `${description} (Instantly available from cache)` : description;
+
+          return (
+            <button
+              key={id}
+              onClick={() => onResolutionChange(id)}
+              disabled={isDisabled}
+              className={`p-3 text-center rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[--color-primary-focus] focus:ring-opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5
+                ${selectedResolution === id
+                  ? 'bg-[--color-primary] border-[--color-primary-hover] text-[--color-primary-text] shadow-lg hover:bg-[--color-primary-hover]'
+                  : 'bg-[--color-surface-2] border-[--color-border] hover:bg-[--color-surface-3] hover:border-[--color-surface-3] text-[--color-text-secondary]'
+                }
+              `}
+              aria-pressed={selectedResolution === id}
+              title={fullDescription}
+            >
+              <span className="font-bold text-sm flex items-center justify-center gap-1.5">
+                {label}
+                {isCached && !isDisabled && <span className="text-amber-300" role="img" aria-label="cached">✨</span>}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
