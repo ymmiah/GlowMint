@@ -19,6 +19,8 @@ import FiltersModal from './components/FiltersModal';
 // FIX: Import CropModal as a named import as it does not have a default export.
 import { CropModal } from './components/CropModal';
 import StyleRemixModal from './components/StyleRemixModal';
+import IntelligentTextModal from './components/IntelligentTextModal';
+import GifCreatorModal from './components/GifCreatorModal';
 
 // --- New Error Display Component ---
 interface AppError {
@@ -185,6 +187,10 @@ Before outputting, review your work against this checklist:
   { id: 'neon', label: 'Neon', emoji: '🌃', title: 'Give the image a futuristic neon/cyberpunk look', prompt: "Transform this photo with a vibrant neon noir or cyberpunk aesthetic. Add glowing neon highlights to edges and key features. Shift the color palette towards deep blues, purples, and hot pinks. Introduce a sense of futuristic grit and atmosphere, perhaps with subtle rain or haze effects." },
   { id: 'miniature', label: 'Miniature', emoji: '🤏', title: 'Apply a tilt-shift/miniature effect', prompt: "Apply a tilt-shift or miniature faking effect to this photo. Create a narrow band of sharp focus across the main subject, then apply a strong, gradual blur to the areas above and below the focal plane. Increase color saturation and contrast to enhance the illusion that the scene is a small-scale model." },
   { id: 'longExposure', label: 'Long Exposure', emoji: '🌊', title: 'Simulate a long exposure effect', prompt: "Simulate a long exposure effect on this photo. Smooth out moving elements like water or clouds into a silky, ethereal blur. Keep stationary objects like rocks or buildings sharp and in focus. The final image should have a sense of motion and tranquility." },
+  { id: 'comicBook', label: 'Comic Book', emoji: '🗯️', title: 'Turn the photo into a comic book panel', prompt: "Convert this photo into a single, dynamic comic book panel. Emulate the style of a classic American comic book. Key elements to include are: 1. **Bold, black ink outlines** to define subjects and create a hand-drawn feel. 2. **Vibrant, saturated colors** with a slightly simplified, flat shading approach instead of smooth gradients. 3. Use **halftone dot patterns (Ben Day dots)** for texture and shading, especially in larger color areas or backgrounds. The final result should feel energetic and look like a high-quality illustration from a graphic novel." },
+  { id: 'addText', label: 'Add Text', emoji: '📝', title: 'Add text intelligently to your image', prompt: '' },
+  { id: 'createGif', label: 'AI GIF', emoji: '🎬', title: 'Create a short, looping animation from your photo', prompt: '' },
+  { id: 'photo3d', label: '3D Photo', emoji: '🧊', title: 'Create a 3D parallax effect for your photo', prompt: "Transform this 2D photo into an image with a simulated 3D 'wobble' or parallax effect. To do this, you must first identify the primary subject and separate it from the background. Then, subtly offset the subject from the background and use inpainting to realistically fill in the newly exposed areas of the background. The goal is to create a single static image that gives a strong illusion of depth and dimension, as if it were a stereoscopic photo." },
 ];
 
 const MAX_CONCURRENT_REQUESTS = 3;
@@ -227,6 +233,8 @@ const App: React.FC = () => {
   const [filtersModalState, setFiltersModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
   const [cropModalState, setCropModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
   const [styleRemixModalState, setStyleRemixModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
+  const [textModalState, setTextModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
+  const [gifModalState, setGifModalState] = useState<{ isOpen: boolean; image: ImageFile | null }>({ isOpen: false, image: null });
 
   // State for Tutorial modal
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
@@ -556,6 +564,14 @@ const App: React.FC = () => {
             setStyleRemixModalState({ isOpen: true, image: originalImages[0] });
             return;
         }
+        if (actionId === 'addText') {
+            setTextModalState({ isOpen: true, image: originalImages[0] });
+            return;
+        }
+        if (actionId === 'createGif') {
+            setGifModalState({ isOpen: true, image: originalImages[0] });
+            return;
+        }
     }
     
     setPrompt(selectedAction.prompt);
@@ -735,6 +751,23 @@ const App: React.FC = () => {
         setIsLoading(false);
     }
   }, [styleRemixModalState, history, historyIndex, getFinalPrompt]);
+
+  const handleApplyText = useCallback(async (text: string, style: string, position: string) => {
+    setTextModalState({ isOpen: false, image: null });
+    const textPrompt = `You are an expert graphic designer. Your task is to add the following text to the provided image: '${text}'. The user has suggested the following style: '${style}' and position: '${position}'. Analyze the image's composition, lighting, and subject matter to integrate the text seamlessly. The text must be perfectly legible and aesthetically pleasing. Output only the final image with the text applied.`;
+    handleEdit(textPrompt);
+  }, [handleEdit]);
+
+  const handleApplyGif = useCallback(async (animationPrompt: string) => {
+      setGifModalState({ isOpen: false, image: null });
+      const gifPrompt = `CRITICAL MISSION: You are a frame-by-frame animator AI. Your task is to create a short, seamless, looping animation based on the provided image and instructions. The final output MUST be a single image containing a horizontal filmstrip of exactly 8 frames.
+  1.  **Analyze Image & Prompt**: Deeply analyze the source image and this instruction: '${animationPrompt}'.
+  2.  **Plan Animation**: Create a subtle, looping animation based on the instruction. The first and last frames must blend seamlessly.
+  3.  **Generate Frames**: Generate 8 distinct frames for this animation.
+  4.  **Assemble Filmstrip**: Arrange all 8 frames horizontally in a single row. The final image should be very wide to accommodate all frames side-by-side. Do not add any borders, numbers, or text between frames. The output is one single, wide image file.`;
+      handleEdit(gifPrompt);
+  }, [handleEdit]);
+
 
   const handleExamplePrompt = useCallback(() => {
     const randomPrompt = examplePrompts[Math.floor(Math.random() * examplePrompts.length)];
@@ -922,6 +955,20 @@ const App: React.FC = () => {
               onApply={handleApplyStyleRemix}
           />
       )}
+       {textModalState.isOpen && textModalState.image && (
+          <IntelligentTextModal
+              image={textModalState.image}
+              onClose={() => setTextModalState({ isOpen: false, image: null })}
+              onApply={handleApplyText}
+          />
+      )}
+      {gifModalState.isOpen && gifModalState.image && (
+          <GifCreatorModal
+              image={gifModalState.image}
+              onClose={() => setGifModalState({ isOpen: false, image: null })}
+              onApply={handleApplyGif}
+          />
+      )}
       {isTutorialOpen && <TutorialModal onClose={handleCloseTutorial} />}
       <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow">
@@ -1042,9 +1089,9 @@ const App: React.FC = () => {
                       <button
                         key={action.id}
                         onClick={() => handleQuickAction(action.id)}
-                        disabled={!canDoQuickAction || (editMode === 'batch' && ['magicErase', 'magicReplace', 'aiBackground', 'filters', 'crop', 'styleRemix'].includes(action.id))}
+                        disabled={!canDoQuickAction || (editMode === 'batch' && ['magicErase', 'magicReplace', 'aiBackground', 'filters', 'crop', 'styleRemix', 'addText', 'createGif'].includes(action.id))}
                         className="p-2 bg-[--color-surface-2] text-[--color-text-primary] font-semibold text-xs rounded-lg shadow-lg hover:bg-[--color-surface-3] disabled:bg-[--color-surface-2]/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 flex flex-col items-center justify-center gap-1 text-center h-16 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[--color-primary-focus] focus:ring-opacity-75"
-                        title={action.title + ((editMode === 'batch' && ['magicErase', 'magicReplace', 'aiBackground', 'filters', 'crop', 'styleRemix'].includes(action.id)) ? ' (Single Edit Mode Only)' : '')}
+                        title={action.title + ((editMode === 'batch' && ['magicErase', 'magicReplace', 'aiBackground', 'filters', 'crop', 'styleRemix', 'addText', 'createGif'].includes(action.id)) ? ' (Single Edit Mode Only)' : '')}
                       >
                         <span className="text-xl" aria-hidden="true">{action.emoji}</span>
                         <span className="leading-tight">{action.label}</span>

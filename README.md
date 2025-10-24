@@ -67,6 +67,10 @@ From simple one-click enhancements to complex, multi-image compositions and inte
     -   **Magic Erase**: Seamlessly paint over and remove unwanted objects.
     -   **Magic Replace**: Select an area and replace it with anything you can imagine.
     -   **Style Remix**: Transfer the complete artistic style of one image onto another.
+    -   **Intelligent Text**: Add text to your images with AI-powered style and placement.
+    -   **AI GIF Creator**: Generate short, looping animations from a single photo and a prompt.
+    -   **3D Photo Effect**: Create a mesmerizing 3D parallax effect from any 2D image.
+    -   **Comic Book Effect**: Turn photos into vibrant comic book panels.
     -   **Line Art**: Convert photos into high-quality, clean black & white line drawings.
     -   **AI Backgrounds, Filters, Cropping & more!**
 -   **🖼️ Powerful Batch Processing**: Apply the same edit to multiple images at once, with a progress bar and an easy-to-navigate results carousel.
@@ -181,6 +185,14 @@ Distributed under the MIT License. See `LICENSE.md` for more information.
 ## 📜 Changelog
 
 All notable changes to this project will be documented in this section.
+
+### [1.6.0] - 2025-10-24
+
+#### ✨ New Features: The Creative Suite Expansion
+- **Comic Book Effect**: Added a one-click "Comic Book" quick action that transforms photos into a classic graphic novel panel, complete with bold outlines and vibrant halftone dot patterns.
+- **Intelligent Text Tool**: Introduced an "Add Text" tool that opens a dedicated modal. Users can input text and receive AI-powered suggestions for style and placement, making it easy to add beautiful typography.
+- **AI GIF Creator**: Added a new "AI GIF" tool. Users can now describe a simple animation in a modal (e.g., "make the clouds move"), and the AI will generate an 8-frame filmstrip, providing the foundation for a short, looping animation.
+- **3D Photo Effect**: Implemented a "3D Photo" quick action that analyzes a 2D photo to create a stunning parallax/wobble effect, giving the image a compelling illusion of depth and dimension.
 
 ### [1.5.0] - 2025-10-16
 
