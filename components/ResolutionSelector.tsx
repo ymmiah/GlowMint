@@ -17,8 +17,8 @@ const resolutions: { id: Resolution; label: string; description: string }[] = [
 
 const ResolutionSelector: React.FC<ResolutionSelectorProps> = ({ selectedResolution, onResolutionChange, isDisabled, cachedResolutions }) => {
   return (
-    <div className="mt-4 mb-2">
-      <h3 className="font-semibold text-[--color-text-secondary] mb-3">Output Resolution</h3>
+    <div className="mt-4">
+      <label className="block text-sm font-semibold text-[--color-text-secondary] mb-2">Output Resolution</label>
       <div className="grid grid-cols-3 gap-3">
         {resolutions.map(({ id, label, description }) => {
           const isCached = cachedResolutions.has(id);

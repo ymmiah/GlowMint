@@ -256,7 +256,6 @@ export const CropModal: React.FC<CropModalProps> = ({ image, onClose, onApply, o
             </div>
             <div className="flex items-center gap-4">
                 <button onClick={handleStraighten} className="py-2 px-5 bg-[--color-surface-3] hover:bg-[--color-text-placeholder] font-bold rounded-lg">Auto-Straighten ✨</button>
-                {/* FIX: Complete the unfinished button element and add the closing tags for the component. */}
                 <button onClick={handleApply} className="py-2 px-5 bg-[--color-primary] hover:bg-[--color-primary-hover] text-[--color-primary-text] font-bold rounded-lg">Apply Crop</button>
             </div>
         </footer>

@@ -10,7 +10,6 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export interface EditResult {
   editedImage: string | null;
-  text: string | null;
 }
 
 export interface ImageInput {
@@ -95,24 +94,12 @@ export const editImageWithNanoBanana = async (
         parts: [...imageParts, ...maskPart, textPart],
       },
       config: {
-        responseModalities: [Modality.IMAGE, Modality.TEXT],
+        responseModalities: [Modality.IMAGE],
       },
     });
 
-    let editedImage: string | null = null;
-    let text: string | null = null;
-
-    const candidate = response.candidates?.[0];
-
-    if (candidate && candidate.content && Array.isArray(candidate.content.parts)) {
-      for (const part of candidate.content.parts) {
-        if (part.inlineData) {
-          editedImage = part.inlineData.data;
-        } else if (part.text) {
-          text = part.text;
-        }
-      }
-    }
+    const imagePart = response.candidates?.[0]?.content?.parts?.find(part => part.inlineData);
+    const editedImage: string | null = imagePart?.inlineData?.data || null;
     
     // If no image is returned, check for a block reason or other feedback.
     if (!editedImage) {
@@ -122,7 +109,7 @@ export const editImageWithNanoBanana = async (
         console.warn("API response did not contain an image part and was not blocked. Response:", response);
     }
     
-    const result: EditResult = { editedImage, text };
+    const result: EditResult = { editedImage };
 
     if (result.editedImage) {
         try {

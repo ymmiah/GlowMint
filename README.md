@@ -52,15 +52,16 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-**GlowMint** is a sophisticated, AI-driven photo editing application that leverages the power of Google's Gemini API (`gemini-2.5-flash-image`) to magically transform images based on natural language prompts. Whether you're a creative professional looking for a rapid prototyping tool or a hobbyist wanting to explore the frontiers of AI-art, GlowMint provides a powerful, beautiful, and intuitive interface for next-generation photo manipulation.
+**GlowMint** is a sophisticated, AI-driven photo editing application that leverages the power of Google's Gemini API (`gemini-2.5-flash-image`) to magically transform images based on natural language prompts. Featuring a clean, professional two-column layout, GlowMint provides a powerful, beautiful, and intuitive interface for next-generation photo manipulation.
 
-From simple one-click enhancements to complex, multi-image compositions and interactive tools like Magic Erase, GlowMint is your canvas for digital creativity.
+Whether you're a creative professional looking for a rapid prototyping tool or a hobbyist wanting to explore the frontiers of AI-art, GlowMint is your canvas for digital creativity.
 
 ---
 
 <!-- KEY FEATURES -->
 ## 🚀 Key Features
 
+-   **✨ Modern Two-Column Layout**: A professional UI that separates editing controls from the live result panel for an intuitive and focused workflow.
 -   **🤖 Intuitive Prompt-Based Editing**: Describe any edit in plain English. Your imagination is the only limit.
 -   **⚡️ One-Click Quick Actions**: A library of professionally crafted prompts for common tasks like background removal, colorization, and artistic styling.
 -   **✂️ Advanced Editing Suite**:
@@ -74,7 +75,7 @@ From simple one-click enhancements to complex, multi-image compositions and inte
     -   **Line Art**: Convert photos into high-quality, clean black & white line drawings.
     -   **AI Backgrounds, Filters, Cropping & more!**
 -   **🖼️ Powerful Batch Processing**: Apply the same edit to multiple images at once, with a progress bar and an easy-to-navigate results carousel.
--   **↔️ Versatile Comparison Tools**: A unified display with **Toggle**, **Slider**, and **Side-by-Side** views for clear before-and-after comparison.
+-   **↔️ Versatile Comparison Tools**: A dedicated results panel featuring **Toggle** and **Slider** views for clear before-and-after comparison.
 -   **🧠 Smart Caching & Pre-fetching**: An intelligent caching layer that instantly loads previous edits and pre-fetches higher resolutions in the background for a lightning-fast experience.
 -   **🔄 Iterative Workflow**: Use any edited image as the new input for further edits, allowing you to layer effects and refine your creations.
 -   **🎨 Customizable UI Themes**: Personalize your editing environment with multiple color palettes (including light and dark modes).
@@ -146,13 +147,13 @@ Make sure you have Node.js and npm (or your favorite package manager) installed 
 
 GlowMint is designed to be intuitive from the start.
 
-1.  **Upload**: Click or drag-and-drop one or more images.
+1.  **Upload**: Click or drag-and-drop one or more images into the uploader on the left.
 2.  **Choose Mode**: Select 'Single' for detailed work or 'Batch' for applying one edit to many photos.
 3.  **Instruct**:
     -   Write a detailed prompt describing your desired edit.
     -   *or* click a **Quick Action** for a pre-defined effect.
 4.  **Generate**: Hit the '✨ Generate' button and watch the AI work.
-5.  **Review & Refine**: Use the comparison tools, download your result, or use it as input for your next creative iteration.
+5.  **Review & Refine**: Your masterpiece appears in the results panel on the right. Use the comparison tools, download your result, or use it as input for your next creative iteration.
 
 For a more detailed walkthrough, check out the **"How to Use GlowMint"** tutorial available in the application's footer.
 
@@ -186,24 +187,40 @@ Distributed under the MIT License. See `LICENSE.md` for more information.
 
 All notable changes to this project will be documented in this section.
 
-### [1.6.0] - 2025-10-24
+### [1.7.0] - 2025-10-28
 
-#### ✨ New Features: The Creative Suite Expansion
-- **Comic Book Effect**: Added a one-click "Comic Book" quick action that transforms photos into a classic graphic novel panel, complete with bold outlines and vibrant halftone dot patterns.
-- **Intelligent Text Tool**: Introduced an "Add Text" tool that opens a dedicated modal. Users can input text and receive AI-powered suggestions for style and placement, making it easy to add beautiful typography.
-- **AI GIF Creator**: Added a new "AI GIF" tool. Users can now describe a simple animation in a modal (e.g., "make the clouds move"), and the AI will generate an 8-frame filmstrip, providing the foundation for a short, looping animation.
-- **3D Photo Effect**: Implemented a "3D Photo" quick action that analyzes a 2D photo to create a stunning parallax/wobble effect, giving the image a compelling illusion of depth and dimension.
+#### ✨ Major UI/UX Overhaul & Performance Tuning
+- **UI/UX Redesign**: Overhauled the entire application layout into a professional and intuitive two-column design. Controls are now neatly organized on the left, with the image results panel on the right, creating a cleaner and more efficient workflow.
+- **Performance Optimization**: Systematically reviewed and optimized all editing tools to reduce latency wherever possible, resulting in a faster and more responsive user experience.
+- **Code Refinements**: Conducted a thorough code review to improve stability and maintainability following the layout changes.
 
-### [1.5.0] - 2025-10-16
+### [1.6.1] - 2025-10-27
 
-#### ✨ New Features & Performance
-- **Smart Caching & Edit Versioning**: Implemented a robust client-side caching system using IndexedDB. This acts as a version control for your edits, instantly loading previously generated results for different resolutions of the same prompt.
-- **"Advanced Thinking" Pre-fetching**: The app now intelligently pre-fetches other resolutions in the background after an edit is completed, making switching between versions feel instantaneous.
-- **UI Feedback**: The resolution selector now visually indicates (✨) which resolutions are cached and available instantly.
+#### ✨ More Tools Restored
+- **Welcome Back Creative Tools**: Re-introduced more fan-favorite Quick Actions based on user feedback.
+- **New 3D Photo Effect**: Added a tool to create a mesmerizing 3D parallax effect from any 2D image, outputting an 8-frame filmstrip.
+- **New Comic Book Effect**: Added a one-click action to transform photos into vibrant comic book panels.
+- **New Line Art Tool**: Added a tool to convert photos into clean, high-quality black & white line drawings.
 
-#### ✨ Feature Update: Line Art
-- **New Power Tool**: Added a highly-advanced "Line Art" featured action, which uses a multi-stage prompt to convert photos into clean, professional-quality line drawings.
-- **Feature Replacement**: Removed the "16-Bit Art" feature due to inconsistent and unreliable results across various scenarios. The new "Line Art" tool provides a far superior and more dependable creative option.
+### [1.6.0] - 2025-10-26
+
+#### ✨ Feature Restoration & Expansion
+- **Restored Quick Actions**: Re-introduced and expanded the Quick Actions panel based on user feedback.
+- **New Artistic Styles**: Added a new section for one-click artistic transformations, including 'Sketch', 'Cartoon', 'Impressionist', and 'Pixel Art'.
+- **New Portrait Tools**: Added a 'Portrait Touch-up' section with tools to 'Smooth Skin', 'Fix Blemishes', 'Brighten Eyes', and 'Whiten Teeth'. These tools are context-aware and will only apply changes if a face is detected.
+- **UI Refinements**: The new Portrait tools are automatically disabled in Batch mode to prevent incorrect edits.
+
+### [1.5.0] - 2025-10-24
+
+#### ✨ UI Overhaul & Creative Suite Expansion
+- **Complete UI/UX Redesign**: Revamped the entire application layout into a professional and intuitive two-column design, separating controls from the results panel for a cleaner workflow.
+- **New Creative Tools**: Integrated three new powerful editing tools:
+  - **Artistic Remix**: Transfer the style from a source image onto your content.
+  - **Intelligent Text**: Add context-aware text overlays with various styling options.
+  - **AI GIF Creator**: Generate an 8-frame filmstrip to visualize a short animation based on a prompt.
+- **Performance Caching**: Implemented a robust client-side caching system using IndexedDB. Edits are saved locally, providing instant results for repeated requests and reducing API calls.
+- **Cache-Aware UI**: The Resolution Selector is now smarter, indicating which output qualities (Low, Medium, High) are already cached and available instantly with a ✨ icon.
+- **Code Refinements**: Conducted a thorough code review, fixing minor bugs, improving component styling for consistency, and making all new and existing features theme-aware.
 
 ### [1.4.1] - 2025-10-11
 
@@ -220,12 +237,6 @@ All notable changes to this project will be documented in this section.
 #### 🏗️ Architecture & Refactoring
 - **Centralized Theming System**: Refactored the entire UI theming system into a dedicated `/theme` directory. All theme variables and logic are now centralized in TypeScript, removing hardcoded styles from `index.html`. This makes adding or modifying themes significantly easier and more maintainable.
 - **Dynamic Style Injection**: The application now dynamically generates and injects the theme stylesheet, ensuring a clean separation of concerns.
-
-### [1.2.1] - 2025-10-03
-
-#### ✨ New Features
-- **Artistic Remix**: Added the "Style Remix" tool, allowing users to apply the complete artistic style of one image to another. The feature includes a dedicated modal for uploading a style image and an **optional prompt** to give the AI specific instructions, like 'only apply the color palette' or 'focus on the brush stroke texture'.
-- **Sticker-fy**: Introduced the "Sticker-fy" quick action, which automatically isolates the main subject of a photo, adds a a white outline and drop shadow, and provides a final image with a transparent background.
 
 ### [1.2.0] - 2025-09-29
 
