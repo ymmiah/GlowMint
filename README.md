@@ -187,7 +187,7 @@ Distributed under the MIT License. See `LICENSE.md` for more information.
 
 All notable changes to this project will be documented in this section.
 
-### [1.7.0] - 2025-10-28
+### [1.7.0] - 2025-11-10
 
 #### ✨ Major UI/UX Overhaul & Performance Tuning
 - **UI/UX Redesign**: Overhauled the entire application layout into a professional and intuitive two-column design. Controls are now neatly organized on the left, with the image results panel on the right, creating a cleaner and more efficient workflow.
