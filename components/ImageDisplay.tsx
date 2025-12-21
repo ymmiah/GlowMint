@@ -1,16 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface ImageDisplayProps {
   imageUrl: string | null;
+  originalImageUrl?: string | null;
   isLoading?: boolean;
   onViewFullscreen?: (url: string) => void;
 }
 
-const ImageDisplay: React.FC<ImageDisplayProps> = ({ imageUrl, isLoading = false, onViewFullscreen }) => {
+const ImageDisplay: React.FC<ImageDisplayProps> = ({ imageUrl, originalImageUrl, isLoading = false, onViewFullscreen }) => {
   const ariaTitle = "Edited result";
+  const [showOriginal, setShowOriginal] = useState(false);
+  const canToggle = !!originalImageUrl && !!imageUrl;
+
+  // Fallback to original image if edited image is missing (e.g. start of history)
+  const displayUrl = (canToggle && showOriginal) ? originalImageUrl : (imageUrl || originalImageUrl);
 
   return (
-    <div className="w-full h-full bg-[--color-surface-inset]/50 rounded-xl border-2 border-[--color-border] flex items-center justify-center overflow-hidden relative group">
+    <div 
+        className="w-full h-full bg-[--color-surface-inset]/50 rounded-xl border-2 border-[--color-border] flex items-center justify-center overflow-hidden relative group"
+        onMouseDown={() => canToggle && setShowOriginal(true)}
+        onMouseUp={() => canToggle && setShowOriginal(false)}
+        onMouseLeave={() => canToggle && setShowOriginal(false)}
+        onTouchStart={() => canToggle && setShowOriginal(true)}
+        onTouchEnd={() => canToggle && setShowOriginal(false)}
+    >
       {isLoading ? (
         <div className="flex flex-col items-center text-[--color-text-tertiary]">
           <svg className="animate-spin h-8 w-8 text-[--color-primary]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -19,13 +32,18 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ imageUrl, isLoading = false
           </svg>
           <p className="mt-2 text-sm">Generating...</p>
         </div>
-      ) : imageUrl ? (
+      ) : displayUrl ? (
         <>
-          <img src={imageUrl} alt={ariaTitle} className="w-full h-full object-contain animate-fade-in" />
+          <img src={displayUrl} alt={ariaTitle} className="w-full h-full object-contain animate-fade-in" />
+           {canToggle && (
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/60 text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                {showOriginal ? 'Original' : 'Click & hold to see original'}
+            </div>
+           )}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 flex items-center justify-center gap-4 transition-all duration-300 opacity-0 group-hover:opacity-100">
               {onViewFullscreen && (
                 <button
-                  onClick={() => onViewFullscreen(imageUrl)}
+                  onClick={() => onViewFullscreen(displayUrl!)}
                   className="p-3 bg-[--color-surface-inset]/60 backdrop-blur-sm rounded-full text-white hover:bg-[--color-surface-inset]/80 transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white"
                   aria-label={`View ${ariaTitle} image in fullscreen`}
                   title={`View ${ariaTitle} image in fullscreen`}

@@ -44,8 +44,10 @@ const MagicReplaceModal: React.FC<MagicReplaceModalProps> = ({ image, onClose, o
     if (!ctx) return true;
     try {
       const imageData = ctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
-      for (let i = 3; i < imageData.data.length; i += 4) {
-          if (imageData.data[i] > 0) return false;
+      const data32 = new Uint32Array(imageData.data.buffer);
+      // Check 32-bit integer values for any non-zero pixel (faster than byte checking)
+      for (let i = 0; i < data32.length; i++) {
+          if (data32[i] !== 0) return false;
       }
     } catch (e) {
       console.error("Could not get image data:", e);
@@ -54,7 +56,6 @@ const MagicReplaceModal: React.FC<MagicReplaceModalProps> = ({ image, onClose, o
     return true;
   }, []);
 
-  // FIX: Moved handleUndo and handleRedo before the useEffect that uses them.
   const handleUndo = useCallback(() => { if (historyIndex > 0) setHistoryIndex(historyIndex - 1); }, [historyIndex]);
   const handleRedo = useCallback(() => { if (historyIndex < history.current.length - 1) setHistoryIndex(historyIndex + 1); }, [historyIndex]);
 
@@ -227,18 +228,20 @@ const MagicReplaceModal: React.FC<MagicReplaceModalProps> = ({ image, onClose, o
   const stopInteraction = useCallback(() => {
     if (isDrawing.current) {
       const canvas = maskCanvasRef.current;
-      const ctx = canvas?.getContext('2d');
-      if (ctx) {
-        const newHistory = history.current.slice(0, historyIndex + 1);
-        newHistory.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-        history.current = newHistory;
-        setHistoryIndex(newHistory.length - 1);
-      }
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      
+      const newHistory = history.current.slice(0, historyIndex + 1);
+      const newSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      history.current = [...newHistory, newSnapshot];
+      setHistoryIndex(newHistory.length);
+      setIsMaskEmpty(checkIsMaskEmpty());
     }
     isDrawing.current = false;
     isPanning.current = false;
     setIsGrabbing(false);
-  }, [historyIndex]);
+  }, [historyIndex, checkIsMaskEmpty]);
 
   const handlePointerMove = useCallback((e: React.MouseEvent) => { updateBrushPreview(e.clientX, e.clientY, true); continueInteraction(e); }, [continueInteraction, updateBrushPreview]);
   const handlePointerLeave = useCallback(() => { updateBrushPreview(0, 0, false); stopInteraction(); }, [stopInteraction, updateBrushPreview]);
@@ -247,10 +250,18 @@ const MagicReplaceModal: React.FC<MagicReplaceModalProps> = ({ image, onClose, o
     e.preventDefault();
     const scaleAmount = -e.deltaY * 0.001;
     const newZoom = Math.min(Math.max(0.1, zoom + scaleAmount), 10);
-    const rect = containerRef.current!.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left, mouseY = e.clientY - rect.top;
+    
+    const container = containerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    const newPanX = mouseX - ((mouseX - pan.x) / zoom) * newZoom;
+    const newPanY = mouseY - ((mouseY - pan.y) / zoom) * newZoom;
+    
     setZoom(newZoom);
-    setPan({ x: mouseX - ((mouseX - pan.x) / zoom) * newZoom, y: mouseY - ((mouseY - pan.y) / zoom) * newZoom });
+    setPan({x: newPanX, y: newPanY });
   };
 
   const handleResetMask = useCallback(() => { if (history.current.length > 0) { history.current = [history.current[0]]; setHistoryIndex(0); } }, []);

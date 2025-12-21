@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface FooterProps {
@@ -5,9 +6,8 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ onOpenTutorial }) => {
-  // Hardcoded date as per user request
   const year = '2025';
-  const dateString = 'November 10, 2025';
+  const dateString = 'December 21, 2025';
 
   return (
     <footer className="w-full bg-[--color-surface-1]/50 border-t border-[--color-border]/50 text-center p-4 mt-8 flex-shrink-0">

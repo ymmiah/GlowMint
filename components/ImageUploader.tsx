@@ -194,7 +194,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onAddImages, onRe
           <div className="text-center text-[--color-text-tertiary]">
             <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
             <p className="mt-2 text-sm font-semibold">Click to upload or drag & drop</p>
-            <p className="text-xs">Upload one or more images (PNG, JPG, WEBP, etc.)</p>
+            <p className="text-xs">PNG, JPG, etc. You can also paste an image.</p>
           </div>
         ) : (
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 p-2 h-full w-full overflow-y-auto">

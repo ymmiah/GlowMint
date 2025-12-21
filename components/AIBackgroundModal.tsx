@@ -38,7 +38,7 @@ const AIBackgroundModal: React.FC<AIBackgroundModalProps> = ({ image, onClose, o
       setError(null);
       try {
         const prompt = "You are an expert in photography and composition. Analyze the provided image and identify the main subject. Based on the subject, suggest 5 creative and fitting background scenes. For each suggestion, provide a 'name' (e.g., 'Cyberpunk City') and a detailed 'prompt' that could be used to generate that background for the subject. Return the result as a JSON array of objects.";
-        const resultText = await generateText(prompt, suggestionSchema);
+        const resultText = await generateText('gemini-2.5-flash-lite', prompt, suggestionSchema);
         const parsedSuggestions = JSON.parse(resultText);
         setSuggestions(parsedSuggestions);
       } catch (e) {

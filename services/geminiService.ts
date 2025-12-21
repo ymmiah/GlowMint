@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Modality, Type } from "@google/genai";
 import type { GenerateContentResponse } from "@google/genai";
 import { createCacheKey, cacheService } from './cacheService';
@@ -32,10 +33,40 @@ const handleApiError = (error: unknown): Error => {
     return new Error("GENERIC_ERROR::The AI seems to be having trouble right now. Please try again in a moment.");
 }
 
-export const generateText = async (prompt: string, responseSchema?: any): Promise<string> => {
+export const generateImageWithImagen = async (
+  prompt: string,
+  aspectRatio: '1:1' | '3:4' | '4:3' | '9:16' | '16:9'
+): Promise<EditResult> => {
+  try {
+    const response = await ai.models.generateImages({
+      model: 'imagen-4.0-generate-001',
+      prompt: prompt,
+      config: {
+        numberOfImages: 1,
+        outputMimeType: 'image/png',
+        aspectRatio: aspectRatio,
+      },
+    });
+
+    const base64ImageBytes: string | undefined = response.generatedImages?.[0]?.image.imageBytes;
+    if (!base64ImageBytes) {
+      throw new Error("GENERIC_ERROR::The AI did not return an image. Your prompt might have been blocked by safety filters.");
+    }
+    return { editedImage: base64ImageBytes };
+  } catch (error) {
+    console.error("Error generating image with Imagen:", error);
+    throw handleApiError(error);
+  }
+};
+
+export const generateText = async (
+  model: 'gemini-2.5-flash' | 'gemini-2.5-flash-lite',
+  prompt: string,
+  responseSchema?: any
+): Promise<string> => {
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: model,
       contents: prompt,
       config: responseSchema ? {
         responseMimeType: "application/json",
@@ -45,6 +76,36 @@ export const generateText = async (prompt: string, responseSchema?: any): Promis
     return response.text;
   } catch (error) {
     console.error("Error generating text:", error);
+    throw handleApiError(error);
+  }
+};
+
+export const analyzeImage = async (
+  model: 'gemini-2.5-flash' | 'gemini-3-pro-preview',
+  image: ImageInput,
+  prompt: string,
+  useThinkingBudget: boolean = false
+): Promise<string> => {
+  try {
+    const imagePart = {
+      inlineData: {
+        mimeType: image.mimeType,
+        data: image.base64ImageData,
+      },
+    };
+    const textPart = { text: prompt };
+
+    const response = await ai.models.generateContent({
+      model: model,
+      contents: { parts: [imagePart, textPart] },
+      config: useThinkingBudget ? {
+        thinkingConfig: { thinkingBudget: 32768 }
+      } : undefined,
+    });
+
+    return response.text;
+  } catch (error) {
+    console.error("Error analyzing image:", error);
     throw handleApiError(error);
   }
 };
@@ -61,7 +122,6 @@ export const editImageWithNanoBanana = async (
     const cachedResult = await cacheService.get<EditResult>(cacheKey);
     if (cachedResult) {
       console.log("Returning result from cache.");
-      // Add a slight delay for better UX, so it doesn't feel "broken" by being too fast.
       await new Promise(resolve => setTimeout(resolve, 150));
       return cachedResult;
     }
@@ -101,12 +161,11 @@ export const editImageWithNanoBanana = async (
     const imagePart = response.candidates?.[0]?.content?.parts?.find(part => part.inlineData);
     const editedImage: string | null = imagePart?.inlineData?.data || null;
     
-    // If no image is returned, check for a block reason or other feedback.
     if (!editedImage) {
         if (response.promptFeedback?.blockReason) {
-            throw new Error(`GENERIC_ERROR::Request was blocked. Reason: ${response.promptFeedback.blockReason}. Please adjust your prompt or image.`);
+            throw new Error(`GENERIC_ERROR::Request was blocked by safety filters. Reason: ${response.promptFeedback.blockReason}.`);
         }
-        console.warn("API response did not contain an image part and was not blocked. Response:", response);
+        throw new Error("GENERIC_ERROR::The model failed to produce an image for this request.");
     }
     
     const result: EditResult = { editedImage };
@@ -114,7 +173,6 @@ export const editImageWithNanoBanana = async (
     if (result.editedImage) {
         try {
             await cacheService.set(cacheKey, result);
-            console.log("Result saved to cache.");
         } catch(e) {
             console.error("Cache write failed.", e);
         }

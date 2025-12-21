@@ -42,17 +42,18 @@ const MagicEraseModal: React.FC<MagicEraseModalProps> = ({ image, onClose, onApp
     if (!ctx) return true;
     try {
       const imageData = ctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
-      for (let i = 3; i < imageData.data.length; i += 4) {
-          if (imageData.data[i] > 0) return false; // Found a non-transparent pixel
+      const data32 = new Uint32Array(imageData.data.buffer);
+      // Check 32-bit integer values for any non-zero pixel (faster than byte checking)
+      for (let i = 0; i < data32.length; i++) {
+          if (data32[i] !== 0) return false;
       }
     } catch (e) {
       console.error("Could not get image data:", e);
-      return true; // Assume empty on error
+      return true;
     }
     return true;
   }, []);
 
-  // FIX: Moved handleUndo and handleRedo before the useEffect that uses them.
   const handleUndo = useCallback(() => {
     if (historyIndex > 0) {
       setHistoryIndex(historyIndex - 1);
@@ -140,7 +141,7 @@ const MagicEraseModal: React.FC<MagicEraseModalProps> = ({ image, onClose, onApp
         e.preventDefault();
         handleRedo();
       }
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { // Common redo shortcut
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { 
         e.preventDefault();
         handleRedo();
       }

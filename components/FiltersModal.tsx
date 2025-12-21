@@ -77,46 +77,40 @@ const FiltersModal: React.FC<FiltersModalProps> = ({ image, onClose, onApply }) 
   useEffect(() => {
     let isCancelled = false;
     
-    const generatePreviewsSequentially = async () => {
-      const imageInput = {
-        base64ImageData: image.base64,
-        mimeType: image.mimeType,
+    const generatePreviews = async () => {
+      const imageInput = { base64ImageData: image.base64, mimeType: image.mimeType };
+      const queue = [...filters];
+      const concurrency = 3; // Limit concurrent requests to respect limits
+      const activePromises: Promise<void>[] = [];
+
+      const processNext = async () => {
+          if (isCancelled || queue.length === 0) return;
+          const filter = queue.shift()!;
+          
+          try {
+             const previewPrompt = `${filter.prompt} IMPORTANT: Generate this as a low-resolution, small thumbnail-sized preview. Speed is more important than quality.`;
+             const result = await editImageWithNanoBanana([imageInput], previewPrompt);
+             if (!isCancelled && result.editedImage) {
+                 setPreviews(prev => ({ ...prev, [filter.name]: { url: `data:image/png;base64,${result.editedImage}`, loading: false, error: false } }));
+             }
+          } catch(e) {
+             if (!isCancelled) {
+                 setPreviews(prev => ({ ...prev, [filter.name]: { url: null, loading: false, error: true } }));
+             }
+          }
+
+          await processNext();
       };
 
-      for (const filter of filters) {
-        if (isCancelled) break;
-        
-        try {
-          const previewPrompt = `${filter.prompt} IMPORTANT: Generate this as a low-resolution, small thumbnail-sized preview. Speed is more important than quality.`;
-          const result = await editImageWithNanoBanana([imageInput], previewPrompt);
-
-          if (isCancelled) break;
-
-          if (result.editedImage) {
-            setPreviews(prev => ({
-              ...prev,
-              [filter.name]: { url: `data:image/png;base64,${result.editedImage}`, loading: false, error: false }
-            }));
-          } else {
-            throw new Error("No image returned");
-          }
-        } catch (error) {
-          if (isCancelled) break;
-          
-          console.error(`Failed to generate preview for ${filter.name}:`, error);
-          setPreviews(prev => ({
-            ...prev,
-            [filter.name]: { url: null, loading: false, error: true }
-          }));
-        }
+      for (let i = 0; i < concurrency; i++) {
+          activePromises.push(processNext());
       }
+      await Promise.all(activePromises);
     };
 
-    generatePreviewsSequentially();
+    generatePreviews();
 
-    return () => {
-        isCancelled = true;
-    };
+    return () => { isCancelled = true; };
   }, [image.url, image.base64, image.mimeType]);
 
   return (
