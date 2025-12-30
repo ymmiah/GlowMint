@@ -11,7 +11,7 @@ import ResolutionSelector from './components/ResolutionSelector';
 import MagicEraseModal from './components/MagicEraseModal';
 import Footer from './components/Footer';
 import TutorialModal from './components/TutorialModal';
-import { editImageWithNanoBanana, generateImageWithImagen, analyzeImage } from './services/geminiService';
+import { editImageWithNanoBanana, generateImageWithImagen, analyzeImage, generateText } from './services/geminiService';
 import type { ImageFile } from './types';
 import MagicReplaceModal from './components/MagicReplaceModal';
 import AIBackgroundModal from './components/AIBackgroundModal';
@@ -183,6 +183,7 @@ const App: React.FC = () => {
     const [prompt, setPrompt] = useState<string>('');
     const [negativePrompt, setNegativePrompt] = useState('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isImprovingPrompt, setIsImprovingPrompt] = useState(false);
     const [error, setError] = useState<AppError | null>(null);
     const [resolution, setResolution] = useState<Resolution>('Medium');
     const [cachedResolutions, setCachedResolutions] = useState<Set<Resolution>>(new Set());
@@ -265,6 +266,21 @@ const App: React.FC = () => {
             setPrompt(''); 
         }
     };
+
+    const handleImprovePrompt = useCallback(async () => {
+        if (!prompt.trim()) return;
+        setIsImprovingPrompt(true);
+        setError(null);
+        try {
+            const instruction = "You are an expert AI prompt engineer. Take the user's basic image description and expand it into a rich, detailed, and artistic prompt that includes specifics about lighting, composition, mood, and texture to produce high-quality AI generated art. Keep the core subject the same. Return ONLY the improved prompt text without quotes or preamble. User Prompt: " + prompt;
+            const improved = await generateText('gemini-2.5-flash-lite', instruction);
+            if (improved) setPrompt(improved.trim());
+        } catch (e: any) {
+            reportError(e, 'GENERIC_ERROR', handleImprovePrompt);
+        } finally {
+            setIsImprovingPrompt(false);
+        }
+    }, [prompt, reportError]);
 
     const handleGenerateEdit = useCallback(async (actionPrompt: string, actionImages?: ImageFile[], actionMask?: ImageFile) => {
         if (images.length === 0) {
@@ -491,14 +507,15 @@ const App: React.FC = () => {
     }, [currentResult]);
 
     const handleDownload = useCallback(() => {
-        if (!currentResult) return;
+        const downloadUrl = currentResult || currentImage?.url;
+        if (!downloadUrl) return;
         const link = document.createElement('a');
-        link.href = currentResult;
-        link.download = `GlowMint-edit-${Date.now()}.png`;
+        link.href = downloadUrl;
+        link.download = `GlowMint-${appMode === 'generate' ? 'gen' : 'edit'}-${Date.now()}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    }, [currentResult]);
+    }, [currentResult, currentImage, appMode]);
     
     // --- Effects ---
     useEffect(() => {
@@ -619,12 +636,34 @@ const App: React.FC = () => {
                         )}
                     </div>
                     
-                    <PromptInput
-                        prompt={prompt}
-                        setPrompt={setPrompt}
-                        isDisabled={appMode === 'edit' && images.length === 0}
-                        placeholder={appMode === 'generate' ? "e.g., a photorealistic portrait of an astronaut on a horse on Mars" : undefined}
-                    />
+                    <div className="relative">
+                        <PromptInput
+                            prompt={prompt}
+                            setPrompt={setPrompt}
+                            isDisabled={appMode === 'edit' && images.length === 0}
+                            placeholder={appMode === 'generate' ? "e.g., a photorealistic portrait of an astronaut on a horse on Mars" : undefined}
+                        />
+                        {prompt.trim().length > 0 && !isLoading && (
+                            <button
+                                onClick={handleImprovePrompt}
+                                disabled={isImprovingPrompt}
+                                className="absolute bottom-4 right-4 p-2 bg-[--color-surface-2] hover:bg-[--color-primary] text-[--color-text-primary] hover:text-[--color-primary-text] rounded-lg transition-all shadow-md group border border-[--color-border]"
+                                title="Magic Improve Prompt ✨"
+                            >
+                                {isImprovingPrompt ? (
+                                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                ) : (
+                                    <div className="flex items-center gap-1.5 px-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                        <span className="text-xs font-bold hidden group-hover:inline">Magic Improve</span>
+                                    </div>
+                                )}
+                            </button>
+                        )}
+                    </div>
                     
                     <div className="mt-4">
                         <button onClick={() => setIsAdvancedOpen(!isAdvancedOpen)} className="text-sm font-semibold text-[--color-text-tertiary] hover:text-[--color-text-primary]">
@@ -668,7 +707,7 @@ const App: React.FC = () => {
                 )}
 
                 <button onClick={handlePrimaryAction} disabled={isLoading || (appMode === 'edit' && images.length === 0) || !prompt} className="w-full py-4 text-lg font-bold bg-gradient-to-r from-[--color-primary] to-[--color-secondary] text-white rounded-xl shadow-lg hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-[--color-primary-focus]/50">
-                    {appMode === 'generate' ? '🎨 Generate Image' : '✨ Generate Edit'}
+                    {appMode === 'generate' ? '🎨 Generate Masterpiece' : '✨ Apply AI Edits'}
                 </button>
             </div>
             
@@ -732,7 +771,7 @@ const App: React.FC = () => {
                         <div className="flex items-center gap-2">
                             <button onClick={handleReset} className="py-2 px-3 bg-[--color-surface-3] text-[--color-text-primary] font-bold rounded-lg text-sm flex items-center gap-2" title="Reset all edits"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l16 16" /></svg></button>
                             <button onClick={handleUseAsInput} disabled={!currentResult} className="py-2 px-3 bg-[--color-primary] text-[--color-primary-text] font-bold rounded-lg text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" title="Use this result as the next input image"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" /></svg></button>
-                            <button onClick={handleDownload} disabled={!currentResult} className="py-2 px-3 bg-[--color-success] hover:bg-[--color-success-hover] text-white font-bold rounded-lg text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg><span>Download</span></button>
+                            <button onClick={handleDownload} disabled={!currentResult && !currentImage?.url} className="py-2 px-3 bg-[--color-success] hover:bg-[--color-success-hover] text-white font-bold rounded-lg text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg><span>Download</span></button>
                         </div>
                     </div>
                 )}

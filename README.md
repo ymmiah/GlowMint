@@ -25,6 +25,7 @@
 ## 🚀 Key Features
 
 -   **🎨 Edit & Generate Modes**: Seamlessly switch between editing photos and generating new ones using Imagen 4.
+-   **🪄 Magic Improve Prompt**: Automatically enhance your simple descriptions into professional AI prompts with one click.
 -   **🤖 AI Image Generation**: Create stunning images with full aspect ratio control (1:1, 16:9, etc.).
 -   **🔍 AI Error Logbook**: Integrated diagnostic system with unique reference IDs for deep technical troubleshooting.
 -   **🔄 Smart Retry Mechanism**: One-click recovery for transient API issues like quota limits or network blips.
@@ -37,20 +38,19 @@
 
 ## 📜 Changelog
 
+### [2.0.0] - 2025-12-30
+
+#### ✨ UX & Reliability Update
+- **Magic Improve Prompt**: Added a new "Magic Improve" button to the prompt input. It uses Gemini 2.5 Flash Lite to expand basic user prompts into detailed, high-quality artistic instructions.
+- **Fixed Generate Mode Downloads**: Resolved a critical bug where generated images couldn't be downloaded because they weren't yet part of the edit history. The download action now correctly targets the active image regardless of its source.
+- **UI Refinement**: Updated primary action buttons with more descriptive labels ("Generate Masterpiece" / "Apply AI Edits").
+- **Static Metadata Refresh**: Updated footer and build timestamps to reflect the end-of-year stable release.
+
 ### [1.9.0] - 2025-12-21
 
 #### ✨ Error Management & Reliability Update
 - **AI Error Logbook**: Implemented a centralized diagnostic logbook. Every error now generates a unique `ERR-XXXX` reference ID.
-- **Precision Diagnostics**: The error log captures tool-specific metadata, model names, and detailed stack traces for easier debugging.
-- **Enhanced Retry Logic**: Added a 'Retry' button that re-triggers the failed operation with original parameters, improving user recovery from transient quota errors.
-- **Static Metadata Refresh**: Updated footer and build timestamps to reflect the latest stable build.
-
-### [1.8.1] - 2025-11-12
-
-#### ✨ Performance & Stability Update
-- **Concurrent Batch Processing**: Implemented parallel processing for batch mode, allowing up to 3 images to generate simultaneously.
-- **Robust History Logic**: Fixed an issue where "Redo" could become unresponsive.
-- **Tool Prompt Upgrades**: Enhanced creative prompts for '3D Photo Effect' and 'Comic Book' styles.
+- **Enhanced Retry Logic**: Added a 'Retry' button that re-triggers the failed operation with original parameters.
 
 ---
 
