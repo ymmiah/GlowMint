@@ -1,11 +1,11 @@
 # ✨ GlowMint Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project from its inception to the current release on December 30, 2025.
 
 ## [2.1.0] - 2025-12-30
-### ✨ Documentation & Organization
-- **Project Structure**: Moved detailed version history to a dedicated `CHANGELOG.md` file.
-- **README Update**: Simplified the front page documentation for better readability.
+### ✨ Documentation & Maintenance
+- **Documentation Architecture**: Separated detailed version history into this `CHANGELOG.md` to keep the main README focused on product features.
+- **Versioning**: Established a formal version control tracking system for future scalability.
 
 ## [2.0.0] - 2025-12-30
 ### ✨ UX & Reliability Update
