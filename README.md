@@ -39,11 +39,12 @@
 
 Recent updates and core milestones. For a complete technical record of all changes since inception, please visit the **[CHANGELOG.md](CHANGELOG.md)**.
 
-- **v2.2.0 (2026-03-31)**: Advanced Text & Fullscreen Interactions (Text Resizing, Fullscreen Text Editing) and Layout & Scaling Fixes (Responsive Image Display, Shrink-wrapped Overlays).
-- **v2.1.0 (2025-12-30)**: Documentation architecture update & history migration.
+- **v2.6.0 (2026-03-31)**: Advanced Text & Fullscreen Interactions (Text Resizing, Fullscreen Text Editing) and Layout & Scaling Fixes.
+- **v2.5.0 (2025-12-30)**: Complete Merger Overhaul and Identity Preservation fixes.
+- **v2.3.0 (2025-12-30)**: New Power Feature: Picture Merger.
 - **v2.0.0 (2025-12-30)**: Added Magic Improve Prompt and fixed Generate Mode download bug.
 - **v1.9.0 (2025-12-21)**: Implemented the AI Error Logbook and Diagnostic system.
-- **v1.8.x (2025-11-12)**: Batch processing and major Imagen 4 integration.
+- **v1.8.0 (2025-11-11)**: Batch processing and major Imagen 4 integration.
 - **v1.0.0 (2025-10-01)**: Initial platform launch.
 
 *Last Updated: March 31, 2026*

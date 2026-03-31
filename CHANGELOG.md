@@ -1,6 +1,15 @@
 # ✨ GlowMint Changelog
 
-All notable changes to this project from its inception to the current release on December 30, 2025.
+All notable changes to this project from its inception to the current release on March 31, 2026.
+
+## [2.6.0] - 2026-03-31
+### ✨ Advanced Text & Fullscreen Interactions
+- **Text Resizing**: Added a drag handle to the bottom-right corner of text overlays, allowing users to dynamically scale text size up and down.
+- **Fullscreen Text Editing**: Upgraded the Fullscreen Modal so that "Intelligent Text" overlays remain fully interactive. You can now move, resize, edit, and delete text while viewing the image in full screen.
+
+### 🛠️ Layout & Scaling Fixes
+- **Responsive Image Display**: Fixed a major flexbox overflow bug where large images would stretch the screen. Images now perfectly scale down (`object-fit: contain`) to fit the available workspace while maintaining their aspect ratio.
+- **Shrink-wrapped Overlays**: Ensured the text overlay container perfectly matches the scaled image dimensions so text doesn't float outside the image boundaries.
 
 ## [2.5.1] - 2025-12-30
 ### 🩹 Critical Fix: Identity Preservation
