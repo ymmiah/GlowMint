@@ -1,12 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
+import TextOverlay, { TextOverlayData } from './TextOverlay';
 
 // Fullscreen Modal Component
 interface FullscreenModalProps {
   imageUrl: string;
   onClose: () => void;
+  textOverlays?: TextOverlayData[];
+  updateTextOverlay?: (id: string, data: Partial<TextOverlayData>) => void;
+  removeTextOverlay?: (id: string) => void;
 }
 
-const FullscreenModal: React.FC<FullscreenModalProps> = ({ imageUrl, onClose }) => {
+const FullscreenModal: React.FC<FullscreenModalProps> = ({ 
+  imageUrl, 
+  onClose,
+  textOverlays = [],
+  updateTextOverlay,
+  removeTextOverlay
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -30,8 +42,17 @@ const FullscreenModal: React.FC<FullscreenModalProps> = ({ imageUrl, onClose }) 
       aria-modal="true"
       role="dialog"
     >
-      <div className="relative max-w-[90vw] max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
-        <img src={imageUrl} alt="Fullscreen view" className="w-auto h-auto max-w-full max-h-full object-contain rounded-lg" />
+      <div className="relative max-w-[90vw] max-h-[90vh] inline-flex min-w-0 min-h-0" ref={containerRef} onClick={(e) => e.stopPropagation()}>
+        <img src={imageUrl} alt="Fullscreen view" className="w-auto h-auto max-w-full max-h-full min-w-0 min-h-0 object-contain rounded-lg" />
+        {textOverlays.map(overlay => (
+          <TextOverlay 
+            key={overlay.id} 
+            overlay={overlay} 
+            updateOverlay={updateTextOverlay!} 
+            removeOverlay={removeTextOverlay!} 
+            containerRef={containerRef} 
+          />
+        ))}
       </div>
       <button
         onClick={onClose}

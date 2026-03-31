@@ -2,6 +2,34 @@
 
 All notable changes to this project from its inception to the current release on December 30, 2025.
 
+## [2.5.1] - 2025-12-30
+### 🩹 Critical Fix: Identity Preservation
+- **"Collage Strategy" Implementation**: Resolved a major bug where the Merger tool would hallucinate new people instead of using the second image. The system now stitches the two input images into a single side-by-side composite before sending it to the AI. This forces the model to recognize both subjects as "existing pixels" that must be edited, rather than generated from scratch.
+
+## [2.5.0] - 2025-12-30
+### 🔄 Complete Merger Overhaul
+- **Simplified Workflow**: The "Picture Merger" tool no longer asks for separate uploads. It now intelligently uses the two images already present in your workspace.
+- **Strict Logic**: The tool is now only available when exactly two images are uploaded, removing confusion about inputs.
+- **Improved Blending**: The AI instructions have been rewritten to strictly enforce the creation of a *single* cohesive image containing subjects from both sources, rather than independent generations.
+
+## [2.4.0] - 2025-12-30
+### 🔄 Merger Engine Update
+- **Adaptive Merging**: The Picture Merger now intelligently handles single-image inputs.
+    - **2 Images**: Performs a classic merge (Subject -> Background).
+    - **1 Image**: Switches to "Generative Background" mode, extracting the subject and creating a new background via AI.
+- **Enhanced Logic**: Fixed data flow issues where merging two distinct images might fail or produce random results. The system now explicitly identifies "Subject Reference" vs "Target Background" for the AI model.
+
+## [2.3.0] - 2025-12-30
+### ✨ New Power Feature: Picture Merger
+- **Advanced Composition**: Added a new "Merger" tool that allows combining subjects from one photo with environments from another.
+- **Identity Preservation**: The merger engine is specifically prompted to <span class="text-[--color-primary]">100% preserve face, body, and clothing</span> while blending them into new backgrounds.
+- **Intelligent Blending**: Automatic analysis of lighting, shadows, and perspective for both images to ensure a photorealistic result.
+
+## [2.2.0] - 2025-12-30
+### 🛠️ Bug Fixes & Contextual Intelligence
+- **Magic Improve Fix**: Resolved an issue where "Magic Improve" ignored the uploaded image context, leading to random results.
+- **Multimodal Intelligence**: The prompt improver now uses `gemini-2.5-flash` to analyze the source image before suggesting edits, ensuring all improvements align perfectly with the original composition and subject.
+
 ## [2.1.0] - 2025-12-30
 ### ✨ Documentation & Maintenance
 - **Documentation Architecture**: Separated detailed version history into this `CHANGELOG.md` to keep the main README focused on product features.

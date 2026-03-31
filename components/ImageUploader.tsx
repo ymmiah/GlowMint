@@ -5,6 +5,7 @@ interface ImageUploaderProps {
   images: ImageFile[];
   onAddImages: (files: ImageFile[]) => void;
   onRemoveImage: (index: number) => void;
+  compact?: boolean;
 }
 
 type UploadState = 'uploading' | 'error';
@@ -55,7 +56,7 @@ const CircularProgressBar = ({ progress }: { progress: number }) => {
 };
 
 
-const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onAddImages, onRemoveImage }) => {
+const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onAddImages, onRemoveImage, compact = false }) => {
   const [uploadStatuses, setUploadStatuses] = useState<UploadStatus[]>([]);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -182,7 +183,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onAddImages, onRe
       />
       <label
         htmlFor="image-upload-input"
-        className={`w-full h-48 border-2 border-dashed rounded-lg flex flex-col justify-center items-center cursor-pointer transition-colors duration-300
+        className={`w-full ${compact ? 'h-24' : 'h-48'} border-2 border-dashed rounded-lg flex flex-col justify-center items-center cursor-pointer transition-colors duration-300
           ${isDragging ? 'border-[--color-primary] bg-[--color-surface-2]/50' : 'border-[--color-surface-3] hover:border-[--color-primary] hover:bg-[--color-surface-2]/50'}
         `}
         onDrop={handleDrop}
@@ -192,12 +193,12 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onAddImages, onRe
       >
         {images.length === 0 && uploadStatuses.length === 0 ? (
           <div className="text-center text-[--color-text-tertiary]">
-            <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
-            <p className="mt-2 text-sm font-semibold">Click to upload or drag & drop</p>
-            <p className="text-xs">PNG, JPG, etc. You can also paste an image.</p>
+            <svg xmlns="http://www.w3.org/2000/svg" className={`mx-auto ${compact ? 'h-6 w-6' : 'h-12 w-12'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+            <p className={`mt-2 font-semibold ${compact ? 'text-xs' : 'text-sm'}`}>Click to upload or drag & drop</p>
+            {!compact && <p className="text-xs">PNG, JPG, etc. You can also paste an image.</p>}
           </div>
         ) : (
-          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 p-2 h-full w-full overflow-y-auto">
+          <div className={`grid ${compact ? 'grid-cols-4 md:grid-cols-6 lg:grid-cols-8' : 'grid-cols-3 md:grid-cols-4 lg:grid-cols-5'} gap-2 p-2 h-full w-full overflow-y-auto`}>
             {images.map((image, index) => (
               <div
                 key={`${image.url.slice(0,30)}-${index}`}

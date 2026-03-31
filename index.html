@@ -20,6 +20,8 @@
       .animate-fade-in {
         animation: fadeIn 0.5s ease-out forwards;
       }
+      .pt-safe { padding-top: env(safe-area-inset-top); }
+      .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
       /* Custom scrollbar for a more polished look */
       ::-webkit-scrollbar {
         width: 8px;
@@ -45,6 +47,7 @@
   }
 }
 </script>
+<link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <div id="root"></div>

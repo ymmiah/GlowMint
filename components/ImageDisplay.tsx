@@ -1,15 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import TextOverlay, { TextOverlayData } from './TextOverlay';
 
 interface ImageDisplayProps {
   imageUrl: string | null;
   originalImageUrl?: string | null;
   isLoading?: boolean;
   onViewFullscreen?: (url: string) => void;
+  textOverlays?: TextOverlayData[];
+  updateTextOverlay?: (id: string, data: Partial<TextOverlayData>) => void;
+  removeTextOverlay?: (id: string) => void;
 }
 
-const ImageDisplay: React.FC<ImageDisplayProps> = ({ imageUrl, originalImageUrl, isLoading = false, onViewFullscreen }) => {
+const ImageDisplay: React.FC<ImageDisplayProps> = ({ 
+  imageUrl, 
+  originalImageUrl, 
+  isLoading = false, 
+  onViewFullscreen,
+  textOverlays = [],
+  updateTextOverlay,
+  removeTextOverlay
+}) => {
   const ariaTitle = "Edited result";
   const [showOriginal, setShowOriginal] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const canToggle = !!originalImageUrl && !!imageUrl;
 
   // Fallback to original image if edited image is missing (e.g. start of history)
@@ -33,28 +46,42 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ imageUrl, originalImageUrl,
           <p className="mt-2 text-sm">Generating...</p>
         </div>
       ) : displayUrl ? (
-        <>
-          <img src={displayUrl} alt={ariaTitle} className="w-full h-full object-contain animate-fade-in" />
-           {canToggle && (
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/60 text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                {showOriginal ? 'Original' : 'Click & hold to see original'}
-            </div>
-           )}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 flex items-center justify-center gap-4 transition-all duration-300 opacity-0 group-hover:opacity-100">
-              {onViewFullscreen && (
-                <button
-                  onClick={() => onViewFullscreen(displayUrl!)}
-                  className="p-3 bg-[--color-surface-inset]/60 backdrop-blur-sm rounded-full text-white hover:bg-[--color-surface-inset]/80 transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white"
-                  aria-label={`View ${ariaTitle} image in fullscreen`}
-                  title={`View ${ariaTitle} image in fullscreen`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5" />
-                  </svg>
-                </button>
-              )}
+        <div className="relative w-full h-full flex items-center justify-center overflow-hidden p-2">
+          <div className="relative inline-flex max-w-full max-h-full min-w-0 min-h-0" ref={containerRef}>
+            <img src={displayUrl} alt={ariaTitle} className="max-w-full max-h-full min-w-0 min-h-0 block animate-fade-in" style={{ objectFit: 'contain' }} />
+            
+            {!showOriginal && textOverlays.map(overlay => (
+              <TextOverlay 
+                key={overlay.id} 
+                overlay={overlay} 
+                updateOverlay={updateTextOverlay!} 
+                removeOverlay={removeTextOverlay!} 
+                containerRef={containerRef} 
+              />
+            ))}
+
+            {canToggle && (
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/60 text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                  {showOriginal ? 'Original' : 'Click & hold to see original'}
+              </div>
+            )}
+            {onViewFullscreen && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onViewFullscreen(displayUrl!);
+                }}
+                className="absolute top-4 right-4 p-2 bg-black/50 backdrop-blur-sm rounded-full text-white hover:bg-black/80 transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white z-50 shadow-lg opacity-70 hover:opacity-100"
+                aria-label={`View ${ariaTitle} image in fullscreen`}
+                title={`View ${ariaTitle} image in fullscreen`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l-5-5m11 5v-4m0 0h-4m4 0l-5-5" />
+                </svg>
+              </button>
+            )}
           </div>
-        </>
+        </div>
       ) : (
          <div className="text-center text-[--color-text-placeholder] p-4 flex flex-col items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-[--color-surface-3]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>

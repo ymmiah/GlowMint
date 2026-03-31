@@ -33,34 +33,44 @@ const handleApiError = (error: unknown): Error => {
     return new Error("GENERIC_ERROR::The AI seems to be having trouble right now. Please try again in a moment.");
 }
 
-export const generateImageWithImagen = async (
+export const generateImage = async (
   prompt: string,
-  aspectRatio: '1:1' | '3:4' | '4:3' | '9:16' | '16:9'
+  aspectRatio: '1:1' | '3:4' | '4:3' | '9:16' | '16:9',
+  modelId: string = 'gemini-2.5-flash-image'
 ): Promise<EditResult> => {
   try {
-    const response = await ai.models.generateImages({
-      model: 'imagen-4.0-generate-001',
-      prompt: prompt,
+    const response = await ai.models.generateContent({
+      model: modelId,
+      contents: {
+        parts: [{ text: prompt }],
+      },
       config: {
-        numberOfImages: 1,
-        outputMimeType: 'image/png',
-        aspectRatio: aspectRatio,
+        imageConfig: {
+          aspectRatio: aspectRatio
+        }
       },
     });
 
-    const base64ImageBytes: string | undefined = response.generatedImages?.[0]?.image.imageBytes;
+    let base64ImageBytes: string | undefined;
+    for (const part of response.candidates?.[0]?.content?.parts || []) {
+      if (part.inlineData) {
+        base64ImageBytes = part.inlineData.data;
+        break;
+      }
+    }
+
     if (!base64ImageBytes) {
       throw new Error("GENERIC_ERROR::The AI did not return an image. Your prompt might have been blocked by safety filters.");
     }
     return { editedImage: base64ImageBytes };
   } catch (error) {
-    console.error("Error generating image with Imagen:", error);
+    console.error("Error generating image:", error);
     throw handleApiError(error);
   }
 };
 
 export const generateText = async (
-  model: 'gemini-2.5-flash' | 'gemini-2.5-flash-lite',
+  model: 'gemini-3-flash-preview' | 'gemini-3.1-flash-lite-preview',
   prompt: string,
   responseSchema?: any
 ): Promise<string> => {
@@ -81,7 +91,7 @@ export const generateText = async (
 };
 
 export const analyzeImage = async (
-  model: 'gemini-2.5-flash' | 'gemini-3-pro-preview',
+  model: 'gemini-3-flash-preview' | 'gemini-3.1-pro-preview',
   image: ImageInput,
   prompt: string,
   useThinkingBudget: boolean = false
@@ -114,7 +124,8 @@ export const analyzeImage = async (
 export const editImageWithNanoBanana = async (
   images: ImageInput[],
   prompt: string,
-  mask?: ImageInput
+  mask?: ImageInput,
+  modelId: string = 'gemini-2.5-flash-image'
 ): Promise<EditResult> => {
   const cacheKey = await createCacheKey(images, prompt, mask);
   
@@ -129,7 +140,7 @@ export const editImageWithNanoBanana = async (
       console.error("Cache read failed, proceeding with API call.", e);
   }
 
-  console.log("Cache miss, calling Gemini API.");
+  console.log(`Cache miss, calling Gemini API with model: ${modelId}`);
 
   try {
     const imageParts = images.map(image => ({
@@ -149,13 +160,10 @@ export const editImageWithNanoBanana = async (
     const textPart = { text: prompt };
 
     const response: GenerateContentResponse = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
+      model: modelId,
       contents: {
         parts: [...imageParts, ...maskPart, textPart],
-      },
-      config: {
-        responseModalities: [Modality.IMAGE],
-      },
+      }
     });
 
     const imagePart = response.candidates?.[0]?.content?.parts?.find(part => part.inlineData);

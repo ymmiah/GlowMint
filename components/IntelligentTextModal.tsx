@@ -30,6 +30,10 @@ const IntelligentTextModal: React.FC<IntelligentTextModalProps> = ({ image, onCl
           <button onClick={onClose} className="text-[--color-text-tertiary] text-3xl hover:text-[--color-text-primary] transition-all duration-200" aria-label="Close">&times;</button>
         </header>
         <div className="flex-grow p-6 overflow-y-auto space-y-6">
+          <div className="bg-[--color-info-bg]/50 border border-[--color-info-border] text-[--color-info-text] p-3 rounded-lg text-sm flex items-start gap-2">
+            <span className="text-lg">💡</span>
+            <p><strong>Pro Tip:</strong> After applying, you can <strong>drag</strong> the text to move it around, and <strong>double-click</strong> it to edit the text directly on the image!</p>
+          </div>
           <div className="flex justify-center">
             <img src={image.url} alt="Image to add text to" className="max-h-48 rounded-lg shadow-lg" />
           </div>
